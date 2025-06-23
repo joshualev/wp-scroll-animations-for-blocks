@@ -1,5 +1,5 @@
 === Scroll Animations for Blocks ===
-Contributors: simplydev
+Contributors: joshualev
 Tags: gutenberg, blocks, animations, scroll, effects
 Requires at least: 6.0
 Tested up to: 6.7.2
@@ -64,4 +64,4 @@ GPL v3 or later
 
 ## Author
 
-Simply Dev
+joshualev

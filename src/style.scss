@@ -1,27 +1,78 @@
 /**
- * Motion Blocks Styles
- * Basic styles for motion-enabled blocks
+ * Motion Blocks Frontend Styles
+ *
+ * This file uses a minimal, transition-based animation system.
+ * Animations are triggered by adding an `is-visible` class via JavaScript,
+ * and they automatically reverse when the class is removed.
  */
 
-/* Ensure motion elements are properly prepared for animation */
-[data-motion-enabled="true"] {
-	/* Performance optimization */
-	will-change: transform, opacity, filter;
-	
-	/* Prevent layout shifts */
-	backface-visibility: hidden;
-	perspective: 1000px;
-	
-	/* Smooth transitions */
-	transition-property: transform, opacity, filter;
-	transition-timing-function: ease-out;
+/*
+ * 1. Main animation setup for blocks with motion enabled.
+ * ==========================================================================
+ * We define the default "hidden" state and the "visible" state, then tell
+ * the browser to smoothly transition between them.
+ */
+.has-motion[data-motion-enabled="true"] {
+	// Default custom property values. These are overridden by presets below.
+	--motion-slide-distance: 20px;
+	--motion-transform: none;
+	--motion-blur: 5px;
+
+	// This is the "hidden" or "exit" state.
+	opacity: 0;
+	filter: blur(var(--motion-blur));
+	transform: var(--motion-transform);
+
+	// This tells the browser to smoothly transition these properties
+	// whenever they change (i.e., when the `.is-visible` class is toggled).
+	transition: opacity var(--motion-duration, 600ms)
+			var(--motion-timing-function, ease-out),
+		transform var(--motion-duration, 600ms)
+			var(--motion-timing-function, ease-out),
+		filter var(--motion-duration, 600ms)
+			var(--motion-timing-function, ease-out);
+
+	// Apply the user-defined delay for the entrance animation.
+	transition-delay: var(--motion-delay, 0ms);
+
+	// This is the "visible" or "entrance" state.
+	// When this class is added, the element transitions TO these styles.
+	// When it's removed, it transitions FROM these styles back to the defaults.
+	&.is-visible {
+		opacity: 1;
+		filter: blur(0);
+		transform: none;
+		// On entrance, we want the delay. On exit, we don't.
+		// Setting the delay to 0 here ensures the exit is immediate.
+		transition-delay: 0ms;
+	}
 }
 
-/* Reduce motion for users who prefer it */
-@media (prefers-reduced-motion: reduce) {
-	[data-motion-enabled="true"] {
-		animation: none !important;
-		transition: none !important;
-		transform: none !important;
-	}
-} 
+/*
+ * 2. Animation Presets
+ * ==========================================================================
+ * We simply override the CSS custom properties to change the "hidden" state.
+ * The transition logic handles the rest automatically for all presets.
+ */
+.has-motion[data-motion-preset="fade-in"] {
+	--motion-blur: 0;
+}
+.has-motion[data-motion-preset="slide-in-up"] {
+	--motion-transform: translateY(var(--motion-slide-distance));
+}
+.has-motion[data-motion-preset="slide-in-down"] {
+	--motion-transform: translateY(calc(-1 * var(--motion-slide-distance)));
+}
+.has-motion[data-motion-preset="slide-in-left"] {
+	--motion-transform: translateX(var(--motion-slide-distance));
+}
+.has-motion[data-motion-preset="slide-in-right"] {
+	--motion-transform: translateX(calc(-1 * var(--motion-slide-distance)));
+}
+.has-motion[data-motion-preset="scale-in"] {
+	--motion-transform: scale(0.95);
+	--motion-blur: 0;
+}
+.has-motion[data-motion-preset="blur-in"] {
+	--motion-transform: scale(0.98);
+}

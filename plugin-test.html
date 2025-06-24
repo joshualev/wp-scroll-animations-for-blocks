@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Motion Blocks - WordPress Interactivity API Test</title>
+		<style>
+			/* Load the motion blocks styles */
+			@import url("./src/style.scss");
+
+			/* Basic page styling */
+			body {
+				margin: 0;
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+					sans-serif;
+				line-height: 1.6;
+			}
+
+			.container {
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 2rem;
+			}
+
+			.test-element {
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				color: white;
+				padding: 2rem;
+				margin: 2rem 0;
+				border-radius: 8px;
+				font-size: 1.2rem;
+				text-align: center;
+			}
+
+			.spacer {
+				height: 100vh;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background: #f8f9fa;
+				font-size: 1.1rem;
+				color: #666;
+			}
+
+			.info-box {
+				background: #e3f2fd;
+				border: 1px solid #1976d2;
+				border-radius: 8px;
+				padding: 1rem;
+				margin: 1rem 0;
+				color: #1976d2;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Motion Blocks - WordPress Interactivity API</h1>
+			<div class="info-box">
+				<strong>WordPress Interactivity API Animation System:</strong>
+				<ul>
+					<li>
+						<strong>Consolidated CSS:</strong> All animations in single
+						style.scss file
+					</li>
+					<li>
+						<strong>Interactivity API:</strong> Modern WordPress state
+						management
+					</li>
+					<li>
+						<strong>IntersectionObserver:</strong> Reliable scroll detection
+					</li>
+					<li>
+						<strong>Smart Detection:</strong> Fully visible elements get
+						entrance animation first
+					</li>
+				</ul>
+			</div>
+
+			<!-- Element fully visible on page load - entrance only -->
+			<div
+				class="test-element"
+				data-wp-interactive="motion-blocks"
+				data-wp-init="callbacks.initMotion"
+				data-wp-context='{"preset":"fade-in","duration":1000,"delay":200,"timingFunction":"ease-out","scrollEnabled":false,"scrollRange":30,"isEntranceActive":false,"isScrollActive":false,"hasPlayedEntrance":false,"isVisible":false,"isVisibleOnLoad":false}'
+				data-wp-class--motion-visible="context.isVisible"
+				data-motion-enabled="true"
+				data-motion-preset="fade-in">
+				Fade In (Entrance Only)
+				<br /><small>Fully visible on load → entrance animation only</small>
+			</div>
+
+			<!-- Element fully visible on page load - entrance + scroll -->
+			<div
+				class="test-element"
+				data-wp-interactive="motion-blocks"
+				data-wp-init="callbacks.initMotion"
+				data-wp-context='{"preset":"slide-in-up","duration":800,"delay":100,"timingFunction":"ease-out","scrollEnabled":true,"scrollRange":30,"isEntranceActive":false,"isScrollActive":false,"hasPlayedEntrance":false,"isVisible":false,"isVisibleOnLoad":false}'
+				data-wp-class--motion-visible="context.isVisible"
+				data-motion-enabled="true"
+				data-motion-preset="slide-in-up">
+				Slide In Up (Entrance + Scroll)
+				<br /><small>Entrance first → then scroll animations</small>
+			</div>
+
+			<div class="spacer">Scroll down for more tests...</div>
+
+			<!-- Elements below fold - scroll only -->
+			<div
+				class="test-element"
+				data-wp-interactive="motion-blocks"
+				data-wp-init="callbacks.initMotion"
+				data-wp-context='{"preset":"slide-in-left","duration":600,"delay":0,"timingFunction":"ease-out","scrollEnabled":true,"scrollRange":20,"isEntranceActive":false,"isScrollActive":false,"hasPlayedEntrance":false,"isVisible":false,"isVisibleOnLoad":false}'
+				data-wp-class--motion-visible="context.isVisible"
+				data-motion-enabled="true"
+				data-motion-preset="slide-in-left">
+				Slide In Left (20% Threshold)
+				<br /><small>Not visible on load → scroll animation only</small>
+			</div>
+
+			<div class="spacer">More animations...</div>
+
+			<div
+				class="test-element"
+				data-wp-interactive="motion-blocks"
+				data-wp-init="callbacks.initMotion"
+				data-wp-context='{"preset":"scale-in","duration":600,"delay":0,"timingFunction":"ease-out","scrollEnabled":true,"scrollRange":50,"isEntranceActive":false,"isScrollActive":false,"hasPlayedEntrance":false,"isVisible":false,"isVisibleOnLoad":false}'
+				data-wp-class--motion-visible="context.isVisible"
+				data-motion-enabled="true"
+				data-motion-preset="scale-in">
+				Scale In (50% Threshold)
+				<br /><small>Triggers when 50% visible</small>
+			</div>
+
+			<div class="spacer">Blur animation test...</div>
+
+			<div
+				class="test-element"
+				data-wp-interactive="motion-blocks"
+				data-wp-init="callbacks.initMotion"
+				data-wp-context='{"preset":"blur-in","duration":800,"delay":0,"timingFunction":"ease-in-out","scrollEnabled":true,"scrollRange":40,"isEntranceActive":false,"isScrollActive":false,"hasPlayedEntrance":false,"isVisible":false,"isVisibleOnLoad":false}'
+				data-wp-class--motion-visible="context.isVisible"
+				data-motion-enabled="true"
+				data-motion-preset="blur-in">
+				Blur In (40% Threshold)
+				<br /><small>Smooth blur effect</small>
+			</div>
+
+			<div class="spacer">End of test</div>
+
+			<div class="info-box">
+				<strong>How it works:</strong>
+				<ul>
+					<li>
+						<strong>Entrance Detection:</strong> Elements fully in viewport on
+						load get entrance animations
+					</li>
+					<li>
+						<strong>Scroll Animations:</strong> IntersectionObserver controls
+						visibility state
+					</li>
+					<li>
+						<strong>WordPress Interactivity API:</strong> State managed
+						declaratively
+					</li>
+					<li>
+						<strong>Repeatable:</strong> Scroll past elements and back to see
+						them animate again
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<script type="module">
+			// Load the motion blocks script
+			import "./src/view.js";
+		</script>
+	</body>
+</html>

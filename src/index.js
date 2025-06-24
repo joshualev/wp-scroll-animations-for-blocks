@@ -13,50 +13,52 @@ import { Fragment } from "@wordpress/element";
 import { addFilter } from "@wordpress/hooks";
 import { __ } from "@wordpress/i18n";
 
+// Basic animation presets
+const ANIMATION_PRESETS = [
+	{ label: __("None", "motion-blocks"), value: "none" },
+	{ label: __("Fade In", "motion-blocks"), value: "fade-in" },
+	{ label: __("Slide In Up", "motion-blocks"), value: "slide-in-up" },
+	{ label: __("Slide In Down", "motion-blocks"), value: "slide-in-down" },
+	{ label: __("Slide In Left", "motion-blocks"), value: "slide-in-left" },
+	{ label: __("Slide In Right", "motion-blocks"), value: "slide-in-right" },
+	{ label: __("Scale In", "motion-blocks"), value: "scale-in" },
+	{ label: __("Blur In", "motion-blocks"), value: "blur-in" }
+];
+
+// Animation timing functions
+const TIMING_FUNCTIONS = [
+	{ label: __("Ease Out", "motion-blocks"), value: "ease-out" },
+	{ label: __("Ease In", "motion-blocks"), value: "ease-in" },
+	{ label: __("Ease In Out", "motion-blocks"), value: "ease-in-out" },
+	{ label: __("Linear", "motion-blocks"), value: "linear" },
+	{ label: __("Ease", "motion-blocks"), value: "ease" }
+];
+
+// Default settings for Motion Blocks
+const MOTION_BLOCKS_DEFAULTS = {
+	ENABLED: false,
+	PRESET: "none",
+	DURATION: 600,
+	DELAY: 0,
+	TIMING_FUNCTION: "ease-out",
+	SCROLL_ENABLED: false,
+	SCROLL_RANGE: 30
+};
+
 /**
  * Add motion attributes to all blocks.
  */
 function addMotionAttributes(settings) {
-	// Skip if block doesn't support custom attributes
-	if (!settings.attributes) {
-		settings.attributes = {};
-	}
+	if (!settings.attributes) settings.attributes = {};
 
 	settings.attributes = {
 		...settings.attributes,
-		motionEnabled: {
-			type: "boolean",
-			default: false
-		},
-		motionPreset: {
-			type: "string",
-			default: "fade"
-		},
-		motionDelay: {
-			type: "number",
-			default: 0
-		},
-		motionDuration: {
-			type: "number",
-			default: 600
-		},
-		motionEasing: {
-			type: "string",
-			default: "ease-out"
-		},
-		motionStartThreshold: {
-			type: "number",
-			default: 0.1
-		},
-		motionEndThreshold: {
-			type: "number",
-			default: 0.9
-		},
-
-		motionPlayOnce: {
-			type: "boolean",
-			default: false
-		}
+		motionEnabled: { type: "boolean", default: false },
+		motionPreset: { type: "string", default: "none" },
+		motionDuration: { type: "number", default: 600 },
+		motionDelay: { type: "number", default: 0 },
+		motionTimingFunction: { type: "string", default: "ease-out" },
+		motionScrollRange: { type: "number", default: 30 }
 	};
 
 	return settings;
@@ -77,49 +79,21 @@ const withMotionControls = createHigherOrderComponent((BlockEdit) => {
 		const {
 			motionEnabled,
 			motionPreset,
-			motionDelay,
 			motionDuration,
-			motionEasing,
-			motionStartThreshold,
-			motionEndThreshold,
-			motionPlayOnce
+			motionDelay,
+			motionTimingFunction,
+			motionScrollRange
 		} = attributes;
-
-		const presetOptions = [
-			{ label: __("Fade", "motion-blocks"), value: "fade" },
-			{ label: __("Slide Up", "motion-blocks"), value: "slide-up" },
-			{ label: __("Slide Down", "motion-blocks"), value: "slide-down" },
-			{ label: __("Slide Left", "motion-blocks"), value: "slide-left" },
-			{
-				label: __("Slide Right", "motion-blocks"),
-				value: "slide-right"
-			},
-			{ label: __("Zoom In", "motion-blocks"), value: "zoom-in" },
-			{ label: __("Zoom Out", "motion-blocks"), value: "zoom-out" },
-			{ label: __("Rotate", "motion-blocks"), value: "rotate" },
-			{ label: __("Flip X", "motion-blocks"), value: "flip-x" },
-			{ label: __("Flip Y", "motion-blocks"), value: "flip-y" },
-			{ label: __("Blur", "motion-blocks"), value: "blur" }
-		];
-
-		const easingOptions = [
-			{ label: __("Ease", "motion-blocks"), value: "ease" },
-			{ label: __("Ease In", "motion-blocks"), value: "ease-in" },
-			{ label: __("Ease Out", "motion-blocks"), value: "ease-out" },
-			{
-				label: __("Ease In Out", "motion-blocks"),
-				value: "ease-in-out"
-			},
-			{ label: __("Linear", "motion-blocks"), value: "linear" }
-		];
 
 		return (
 			<Fragment>
 				<BlockEdit {...props} />
 				<InspectorControls>
-					<PanelBody title={__("Motion", "motion-blocks")} initialOpen={false}>
+					<PanelBody
+						title={__("Motion Animation", "motion-blocks")}
+						initialOpen={false}>
 						<ToggleControl
-							label={__("Enable Motion", "motion-blocks")}
+							label={__("Enable Animation", "motion-blocks")}
 							checked={motionEnabled}
 							onChange={(value) => setAttributes({ motionEnabled: value })}
 						/>
@@ -127,76 +101,81 @@ const withMotionControls = createHigherOrderComponent((BlockEdit) => {
 						{motionEnabled && (
 							<Fragment>
 								<SelectControl
-									label={__("Animation Preset", "motion-blocks")}
+									label={__("Animation Effect", "motion-blocks")}
 									value={motionPreset}
-									options={presetOptions}
+									options={ANIMATION_PRESETS}
 									onChange={(value) => setAttributes({ motionPreset: value })}
 								/>
 
-								<RangeControl
-									label={__("Delay (ms)", "motion-blocks")}
-									value={motionDelay}
-									onChange={(value) => setAttributes({ motionDelay: value })}
-									min={0}
-									max={2000}
-									step={100}
-								/>
+								{motionPreset !== "none" && (
+									<Fragment>
+										<RangeControl
+											label={__("Duration (ms)", "motion-blocks")}
+											value={motionDuration}
+											onChange={(value) =>
+												setAttributes({ motionDuration: value })
+											}
+											min={200}
+											max={1500}
+											step={50}
+										/>
 
-								<RangeControl
-									label={__("Duration (ms)", "motion-blocks")}
-									value={motionDuration}
-									onChange={(value) =>
-										setAttributes({
-											motionDuration: value
-										})
-									}
-									min={100}
-									max={3000}
-									step={100}
-								/>
+										<RangeControl
+											label={__("Delay (ms)", "motion-blocks")}
+											value={motionDelay}
+											onChange={(value) =>
+												setAttributes({ motionDelay: value })
+											}
+											min={0}
+											max={1000}
+											step={50}
+											help={__(
+												"Delay before entrance animation.",
+												"motion-blocks"
+											)}
+										/>
 
-								<SelectControl
-									label={__("Easing", "motion-blocks")}
-									value={motionEasing}
-									options={easingOptions}
-									onChange={(value) => setAttributes({ motionEasing: value })}
-								/>
+										<SelectControl
+											label={__("Timing Function", "motion-blocks")}
+											value={motionTimingFunction}
+											options={TIMING_FUNCTIONS}
+											onChange={(value) =>
+												setAttributes({ motionTimingFunction: value })
+											}
+										/>
 
-								<RangeControl
-									label={__("Start Threshold", "motion-blocks")}
-									value={motionStartThreshold}
-									onChange={(value) =>
-										setAttributes({
-											motionStartThreshold: value
-										})
-									}
-									min={0}
-									max={1}
-									step={0.1}
-								/>
+										<RangeControl
+											label={__("Scroll Threshold (%)", "motion-blocks")}
+											value={motionScrollRange}
+											onChange={(value) =>
+												setAttributes({ motionScrollRange: value })
+											}
+											min={10}
+											max={100}
+											step={10}
+											help={__(
+												"How much of an element should be visible before its one-time animation triggers.",
+												"motion-blocks"
+											)}
+										/>
 
-								<RangeControl
-									label={__("End Threshold", "motion-blocks")}
-									value={motionEndThreshold}
-									onChange={(value) =>
-										setAttributes({
-											motionEndThreshold: value
-										})
-									}
-									min={0}
-									max={1}
-									step={0.1}
-								/>
-
-								<ToggleControl
-									label={__("Play Once", "motion-blocks")}
-									checked={motionPlayOnce}
-									onChange={(value) =>
-										setAttributes({
-											motionPlayOnce: value
-										})
-									}
-								/>
+										<div
+											style={{
+												fontStyle: "italic",
+												color: "#666",
+												fontSize: "13px",
+												marginTop: "16px",
+												padding: "12px",
+												background: "#f8f9fa",
+												borderRadius: "4px"
+											}}>
+											<strong>WordPress Interactivity API:</strong> Elements
+											fully visible on page load play entrance animation first.
+											With scroll enabled, they animate when scrolling in/out of
+											view.
+										</div>
+									</Fragment>
+								)}
 							</Fragment>
 						)}
 					</PanelBody>
@@ -210,33 +189,4 @@ addFilter(
 	"editor.BlockEdit",
 	"motion-blocks/with-controls",
 	withMotionControls
-);
-
-/**
- * Add motion data attributes to block wrapper.
- */
-function addMotionProps(props, blockType, attributes) {
-	const { motionEnabled } = attributes;
-
-	if (motionEnabled) {
-		return {
-			...props,
-			"data-motion-enabled": "true",
-			"data-motion-preset": attributes.motionPreset,
-			"data-motion-delay": attributes.motionDelay,
-			"data-motion-duration": attributes.motionDuration,
-			"data-motion-easing": attributes.motionEasing,
-			"data-motion-start-threshold": attributes.motionStartThreshold,
-			"data-motion-end-threshold": attributes.motionEndThreshold,
-			"data-motion-play-once": attributes.motionPlayOnce
-		};
-	}
-
-	return props;
-}
-
-addFilter(
-	"blocks.getSaveContent.extraProps",
-	"motion-blocks/add-props",
-	addMotionProps
 );

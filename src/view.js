@@ -1,234 +1,194 @@
 /**
  * Motion Blocks Frontend Script
- * Handles scroll-triggered animations for blocks with motion attributes.
+ * WordPress Interactivity API with IntersectionObserver
  */
-import { animationFactory } from "./animations/animation-factory.js";
+import { getContext, getElement, store } from "@wordpress/interactivity";
+import "./style.scss";
 
-class MotionBlocks {
-	constructor() {
-		this.observers = new Map();
-		this.elements = new Map();
-		this.isInitialized = false;
+/**
+ * WordPress dependencies
+		// Global state
 
-		// Bind methods
-		this.init = this.init.bind(this);
-		this.handleIntersection = this.handleIntersection.bind(this);
-		this.createObserver = this.createObserver.bind(this);
-		this.initializeElement = this.initializeElement.bind(this);
-		this.animateElement = this.animateElement.bind(this);
-	}
+/*"
+ * Test if Interactivity API is working
+ */
+console.log("Motion Blocks: Testing Interactivity API");
+console.log("store function:", store);
 
-	init() {
-		if (this.isInitialized) {
-			return;
-		}
+/**
+ * A simple feature detection for CSS `animation-timeline: view()`.
+ */
+const supportsViewTimeline = () =>
+	window.CSS &&
+	window.CSS.supports &&
+	window.CSS.supports("animation-timeline", "view()");
 
-		// Find all elements with motion enabled
-		const motionElements = document.querySelectorAll(
-			'[data-motion-enabled="true"]'
-		);
+store("motion-blocks", {
+	state: {
+		test: "Motion Blocks loaded successfully!"
+	},
+	actions: {
+		/**
+		 * Check if element is fully visible in viewport with buffer
+		 */
+		isElementFullyVisible() {
+			const { ref } = getElement();
+			console.log("ref:", ref);
+			if (!ref) return false;
 
-		if (motionElements.length === 0) {
-			return;
-		}
+			const rect = ref.getBoundingClientRect();
+			const windowHeight =
+				window.innerHeight || document.documentElement.clientHeight;
+			const windowWidth =
+				window.innerWidth || document.documentElement.clientWidth;
 
-		// Initialize each element
-		motionElements.forEach((element) => {
-			this.initializeElement(element);
-		});
+			// Element must be completely within viewport with buffer
+			const buffer = 50;
+			return (
+				rect.top >= buffer &&
+				rect.left >= buffer &&
+				rect.bottom <= windowHeight - buffer &&
+				rect.right <= windowWidth - buffer
+			);
+		},
 
-		this.isInitialized = true;
-	}
+		/**
+		 * Play entrance animation for elements visible on page load
+		 */
+		playEntranceAnimation() {
+			const { ref } = getElement();
+			const context = getContext();
 
-	initializeElement(element) {
-		// Get motion settings from data attributes
-		const settings = {
-			preset: element.dataset.motionPreset || "fade",
-			delay: parseInt(element.dataset.motionDelay) || 0,
-			duration: parseInt(element.dataset.motionDuration) || 600,
-			easing: element.dataset.motionEasing || "ease-out",
-			startThreshold: parseFloat(element.dataset.motionStartThreshold) || 0.1,
-			endThreshold: parseFloat(element.dataset.motionEndThreshold) || 0.9,
-			playOnce: element.dataset.motionPlayOnce === "true"
-		};
+			if (!ref) return;
 
-		// Create animation instance
-		const animation = animationFactory.create(settings.preset, settings);
+			const { preset, duration, delay, timingFunction, scrollEnabled } =
+				context;
 
-		if (!animation) {
-			console.warn("Failed to create animation for element:", element);
-			return;
-		}
+			// Set CSS custom properties for entrance animation
+			ref.style.setProperty("--motion-duration", `${duration}ms`);
+			ref.style.setProperty("--motion-delay", `${delay}ms`);
+			ref.style.setProperty("--motion-timing-function", timingFunction);
 
-		// Store element data
-		this.elements.set(element, {
-			animation,
-			settings,
-			hasAnimated: false,
-			isVisible: false,
-			lastProgress: 0
-		});
+			// Apply entrance animation class
+			ref.setAttribute("data-motion-entrance", "true");
+			context.isEntranceActive = true;
+			context.hasPlayedEntrance = false;
 
-		// Set initial state
-		animation.applyStyles(element, 0, true);
+			// If scroll is enabled, transition after entrance completes
+			if (scrollEnabled) {
+				const handleAnimationEnd = (event) => {
+					if (
+						event.target === ref &&
+						event.animationName.includes("entrance")
+					) {
+						ref.removeEventListener("animationend", handleAnimationEnd);
+						context.hasPlayedEntrance = true;
 
-		// Create intersection observer for this element
-		this.createObserver(element);
-	}
+						// Transition to scroll mode
+						ref.removeAttribute("data-motion-entrance");
+						context.isEntranceActive = false;
 
-	createObserver(element) {
-		// Create observer with fine-grained thresholds for smooth animations
-		const thresholds = [];
-		for (let i = 0; i <= 100; i++) {
-			thresholds.push(i / 100);
-		}
+						// Clear entrance-specific properties
+						ref.style.removeProperty("--motion-delay");
 
-		const observer = new IntersectionObserver(
-			(entries) => this.handleIntersection(entries, element),
-			{
-				threshold: thresholds,
-				rootMargin: "0px"
+						// Setup scroll animation
+						store("motion-blocks").actions.setupScrollAnimation();
+					}
+				};
+
+				ref.addEventListener("animationend", handleAnimationEnd);
 			}
-		);
+		},
 
-		observer.observe(element);
-		this.observers.set(element, observer);
-	}
+		/**
+		 * Set up scroll animation with IntersectionObserver
+		 */
+		setupScrollAnimation() {
+			const { ref } = getElement();
+			const context = getContext();
 
-	handleIntersection(entries, element) {
-		const entry = entries[0];
-		const elementData = this.elements.get(element);
+			if (!ref || context.isScrollActive) return;
 
-		if (!elementData) {
-			return;
+			const { duration, scrollRange } = context;
+
+			// Set CSS properties for scroll animation
+			ref.style.setProperty("--motion-duration", `${duration}ms`);
+			ref.setAttribute("data-motion-scroll", "true");
+			context.isScrollActive = true;
+
+			// Calculate threshold from scroll range percentage
+			const threshold = Math.max(
+				0.1,
+				Math.min(1.0, parseFloat(scrollRange) / 100)
+			);
+
+			// Create IntersectionObserver
+			const observer = new IntersectionObserver(
+				(entries) => {
+					entries.forEach((entry) => {
+						context.isVisible = entry.isIntersecting;
+					});
+				},
+				{
+					threshold: threshold,
+					rootMargin: "0px 0px -10% 0px"
+				}
+			);
+
+			observer.observe(ref);
+
+			// Store observer reference for cleanup
+			ref._motionObserver = observer;
+		},
+
+		test() {
+			console.log("Motion Blocks: Action called successfully!");
 		}
+	},
+	callbacks: {
+		/**
+		 * Initializes the motion effect for a block using IntersectionObserver.
+		 * This provides precise control over when animations are triggered.
+		 */
+		initMotion() {
+			const { ref } = getElement();
+			const context = getContext();
 
-		const { animation, settings } = elementData;
-		const ratio = entry.intersectionRatio;
+			// Exit if animation is disabled or no preset is selected.
+			if (!context.motionEnabled || context.motionPreset === "none") {
+				return;
+			}
 
-		// Check if element is in view based on thresholds
-		const isInView = ratio >= settings.startThreshold;
+			const observer = new IntersectionObserver(
+				(entries, obs) => {
+					entries.forEach((entry) => {
+						if (entry.isIntersecting) {
+							// Element is in view, add class to trigger animation.
+							ref.classList.add("is-visible");
 
-		// Update visibility state
-		elementData.isVisible = isInView;
+							// If scroll animation is NOT enabled, this is a one-time effect.
+							// We can unobserve the element for performance.
+							if (!context.motionScrollEnabled) {
+								obs.unobserve(ref);
+							}
+						} else {
+							// Element is out of view. If scroll animation is enabled,
+							// remove the class so it can re-animate on next entry.
+							if (context.motionScrollEnabled) {
+								ref.classList.remove("is-visible");
+							}
+						}
+					});
+				},
+				{
+					// Use the scroll range from settings to set the threshold.
+					// The value from the editor is a percentage (e.g., 30),
+					// so we divide by 100 to get a value between 0.0 and 1.0.
+					threshold: (context.motionScrollRange || 10) / 100
+				}
+			);
 
-		// Handle play once logic: if animation has completed and playOnce is enabled, disconnect observer
-		if (
-			settings.playOnce &&
-			elementData.hasAnimated &&
-			elementData.lastProgress >= 1
-		) {
-			this.disconnectElement(element);
-			return;
-		}
-
-		// Animate based on intersection ratio
-		this.animateElement(element, ratio, elementData);
-	}
-
-	animateElement(element, ratio, elementData) {
-		const { animation, settings } = elementData;
-
-		// Calculate animation progress
-		const progress = animation.calculateProgress(
-			ratio,
-			elementData.isVisible,
-			elementData.hasAnimated
-		);
-
-		// Only update if progress has changed significantly (performance optimization)
-		const progressDiff = Math.abs(progress - elementData.lastProgress);
-		if (
-			progressDiff < 0.01 &&
-			elementData.lastProgress !== 0 &&
-			progress !== 1
-		) {
-			return;
-		}
-
-		// Mark as animated if progress > 0
-		if (progress > 0) {
-			elementData.hasAnimated = true;
-		}
-
-		// Apply animation styles
-		animation.applyStyles(element, progress);
-
-		// Store last progress for comparison
-		elementData.lastProgress = progress;
-	}
-
-	/**
-	 * Refresh all animations (useful for dynamic content)
-	 */
-	refresh() {
-		this.destroy();
-		this.init();
-	}
-
-	/**
-	 * Add motion to a specific element
-	 * @param {HTMLElement} element - Element to add motion to
-	 */
-	addElement(element) {
-		if (
-			element.dataset.motionEnabled === "true" &&
-			!this.elements.has(element)
-		) {
-			this.initializeElement(element);
+			observer.observe(ref);
 		}
 	}
-
-	/**
-	 * Disconnect observer for a specific element (used for play once)
-	 * @param {HTMLElement} element - Element to disconnect observer for
-	 */
-	disconnectElement(element) {
-		const observer = this.observers.get(element);
-		if (observer) {
-			observer.disconnect();
-			this.observers.delete(element);
-		}
-		// Note: We keep the element data for potential future use
-	}
-
-	/**
-	 * Remove motion from a specific element
-	 * @param {HTMLElement} element - Element to remove motion from
-	 */
-	removeElement(element) {
-		const observer = this.observers.get(element);
-		if (observer) {
-			observer.disconnect();
-			this.observers.delete(element);
-		}
-
-		this.elements.delete(element);
-	}
-
-	destroy() {
-		// Clean up observers
-		this.observers.forEach((observer) => {
-			observer.disconnect();
-		});
-
-		this.observers.clear();
-		this.elements.clear();
-		this.isInitialized = false;
-	}
-}
-
-// Initialize when DOM is ready
-const motionBlocks = new MotionBlocks();
-
-if (document.readyState === "loading") {
-	document.addEventListener("DOMContentLoaded", motionBlocks.init);
-} else {
-	motionBlocks.init();
-}
-
-// Re-initialize on navigation (for SPA-like behavior)
-window.addEventListener("load", motionBlocks.init);
-
-// Export for potential external use
-window.MotionBlocks = motionBlocks;
+});

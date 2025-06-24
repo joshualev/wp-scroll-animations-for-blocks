@@ -1,0 +1,27 @@
+/**
+ * Motion Blocks Styles
+ * Basic styles for motion-enabled blocks
+ */
+
+/* Ensure motion elements are properly prepared for animation */
+[data-motion-enabled="true"] {
+	/* Performance optimization */
+	will-change: transform, opacity, filter;
+	
+	/* Prevent layout shifts */
+	backface-visibility: hidden;
+	perspective: 1000px;
+	
+	/* Smooth transitions */
+	transition-property: transform, opacity, filter;
+	transition-timing-function: ease-out;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+	[data-motion-enabled="true"] {
+		animation: none !important;
+		transition: none !important;
+		transform: none !important;
+	}
+} 

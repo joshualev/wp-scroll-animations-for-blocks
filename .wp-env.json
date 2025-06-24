@@ -1,0 +1,5 @@
+{
+	"core": "WordPress/WordPress#6.8",
+	"plugins": [ "." ],
+	"themes": [ "WordPress/twentytwentyfour" ]
+}

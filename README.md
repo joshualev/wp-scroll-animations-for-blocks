@@ -1,66 +1,139 @@
-=== Scroll Animations for Blocks ===
-Contributors: joshualev
-Tags: gutenberg, blocks, animations, scroll, effects
-Requires at least: 6.0
-Tested up to: 6.7.2
-Requires PHP: 7.4
-Stable tag: 1.0.0
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-3.0.html
+# Motion Blocks
 
-# Scroll Animations for Blocks
-
-A lightweight WordPress plugin that adds scroll animations to all Gutenberg blocks.
+A lightweight WordPress plugin that adds highly configurable motion effects to any Gutenberg block using WordPress scripts best practices.
 
 ## Description
 
-Scroll Animations for Gutenberg allows you to add smooth scroll animations to any block in the WordPress editor. Each block can be configured with its own animation settings, including threshold, duration, and delay.
+Motion Blocks allows you to add smooth, performant scroll animations to any block in the WordPress editor. Each block can be configured with its own animation settings, including presets, start/end thresholds, duration, easing, and more.
 
 ## Features
 
-- Add scroll animations to any Gutenberg block
-- Customizable animation settings per block:
-  - Enable/disable animation
-  - Threshold (when the animation triggers)
-  - Duration (how long the animation lasts)
-  - Delay (when the animation starts)
-- Lightweight and performance optimized
-- Uses Intersection Observer API for smooth performance
+-   **Extend ALL blocks**: Adds motion controls to every Gutenberg block
+-   **Rich animation controls per block**:
+    -   Enable/disable motion
+    -   Animation presets (Fade, Slide Up/Down/Left/Right, Zoom In/Out, Rotate, Flip X/Y)
+    -   Delay and Duration controls
+    -   Easing functions (ease, ease-in, ease-out, ease-in-out, linear)
+    -   Start and End Thresholds for fine-grained control
+    -   "Play Once" setting
+-   **Lightweight and performance-optimized**: Runtime ~6kB total (3.8kB editor + 3kB frontend)
+-   **Uses IntersectionObserver** for efficient scroll detection with 101 thresholds for smooth animations
+-   **Progressive animations**: Elements animate smoothly based on scroll position, not just on/off
+-   **Elements in viewport on page load** are properly handled
+-   **Accessibility**: Respects `prefers-reduced-motion` setting
+
+## Technical Stack
+
+-   Built with `@wordpress/scripts` v28.3.0 following WordPress best practices
+-   Vanilla JavaScript frontend (no jQuery or heavy dependencies)
+-   SCSS for styling
+-   Jest for unit testing
+-   Playwright for E2E testing
+-   WordPress 6.8+ compatible
 
 ## Installation
 
-1. Download the plugin zip file
-2. Go to WordPress admin > Plugins > Add New
-3. Click "Upload Plugin" and select the downloaded zip file
-4. Click "Install Now" and then "Activate"
+1.  Download the plugin zip file.
+2.  Go to your WordPress admin dashboard > Plugins > Add New.
+3.  Click "Upload Plugin" and select the downloaded zip file.
+4.  Click "Install Now" and then "Activate".
 
 ## Usage
 
-1. Edit any post or page with the WordPress editor
-2. Select any block
-3. In the block settings sidebar, look for the "Scroll Animation" panel
-4. Enable the animation and adjust the settings as needed:
-   - Threshold: When the block should start animating (0-1)
-   - Duration: How long the animation should last (0-5000ms)
-   - Delay: When the animation should start (0-5000ms)
+1.  Edit any post or page with the WordPress editor.
+2.  Select any block (paragraph, image, heading, etc.).
+3.  In the block settings sidebar, find the "Motion" panel.
+4.  Enable motion and configure the settings to your liking.
+5.  The animations will work automatically on the frontend.
 
 ## Development
 
-This plugin uses `@wordpress/scripts` for development. To get started:
+This plugin uses `@wordpress/scripts` for development following WordPress best practices.
 
-1. Clone the repository
-2. Run `npm install`
-3. Run `npm run start` for development
-4. Run `npm run build` for production build
+### Getting Started
+
+```bash
+# Clone the repository
+git clone [repository-url]
+cd motion-blocks
+
+# Install dependencies
+npm install
+
+# Start development mode (watch for changes)
+npm run start
+
+# Build for production
+npm run build
+```
+
+### Testing
+
+```bash
+# Run unit tests
+npm test
+
+# Run E2E tests (requires Docker)
+npm run wp-env start
+npm run test:e2e
+
+# Debug E2E tests
+npm run test:e2e:debug
+```
+
+### Code Quality
+
+```bash
+# Format code
+npm run format
+
+# Lint JavaScript
+npm run lint:js
+
+# Lint CSS
+npm run lint:css
+```
+
+## File Structure
+
+```
+motion-blocks/
+├── src/
+│   ├── index.js          # Editor script (extends all blocks)
+│   ├── view.js           # Frontend animation script
+│   ├── style.scss        # Frontend styles
+│   └── __tests__/        # Unit tests
+├── tests/e2e/            # E2E tests
+├── build/                # Built assets
+├── motion-blocks.php     # Main plugin file
+└── package.json          # Dependencies and scripts
+```
 
 ## Requirements
 
-- WordPress 5.0 or higher
-- Modern web browser with Intersection Observer API support
+-   **WordPress**: 6.8 or higher
+-   **PHP**: 7.4 or higher
+-   **Browser**: Modern browser with `IntersectionObserver` support
+-   **Development**: Node.js 18+, npm, Docker (for E2E tests)
+
+## Build Output
+
+- **Editor bundle**: `build/index.js` (~3.8kB minified)
+- **Frontend bundle**: `build/view.js` (~3kB minified)
+- **Total runtime**: ~6.8kB (well under 9kB requirement)
+
+## Browser Support
+
+- Chrome 58+
+- Firefox 55+
+- Safari 12.1+
+- Edge 79+
+
+(All browsers with IntersectionObserver support)
 
 ## License
 
-GPL v3 or later
+GPL v2.0 or later
 
 ## Author
 

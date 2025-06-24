@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { InspectorControls } from "@wordpress/block-editor";
 import {
 	PanelBody,
@@ -6,199 +9,234 @@ import {
 	ToggleControl
 } from "@wordpress/components";
 import { createHigherOrderComponent } from "@wordpress/compose";
+import { Fragment } from "@wordpress/element";
 import { addFilter } from "@wordpress/hooks";
 import { __ } from "@wordpress/i18n";
-import {
-	ANIMATION_DIRECTIONS,
-	ANIMATION_TYPES,
-	DEFAULT_SETTINGS
-} from "./constants";
-import "./style.css";
 
-const withScrollAnimation = createHigherOrderComponent((BlockEdit) => {
-	return (props) => {
-		if (!props.isSelected) {
-			return <BlockEdit {...props} />;
+/**
+ * Add motion attributes to all blocks.
+ */
+function addMotionAttributes(settings) {
+	// Skip if block doesn't support custom attributes
+	if (!settings.attributes) {
+		settings.attributes = {};
+	}
+
+	settings.attributes = {
+		...settings.attributes,
+		motionEnabled: {
+			type: "boolean",
+			default: false
+		},
+		motionPreset: {
+			type: "string",
+			default: "fade"
+		},
+		motionDelay: {
+			type: "number",
+			default: 0
+		},
+		motionDuration: {
+			type: "number",
+			default: 600
+		},
+		motionEasing: {
+			type: "string",
+			default: "ease-out"
+		},
+		motionStartThreshold: {
+			type: "number",
+			default: 0.1
+		},
+		motionEndThreshold: {
+			type: "number",
+			default: 0.9
+		},
+
+		motionPlayOnce: {
+			type: "boolean",
+			default: false
 		}
+	};
 
+	return settings;
+}
+
+addFilter(
+	"blocks.registerBlockType",
+	"motion-blocks/add-attributes",
+	addMotionAttributes
+);
+
+/**
+ * Add motion controls to the block inspector.
+ */
+const withMotionControls = createHigherOrderComponent((BlockEdit) => {
+	return (props) => {
 		const { attributes, setAttributes } = props;
 		const {
-			scrollAnimationEnabled = DEFAULT_SETTINGS.ENABLED,
-			scrollAnimationType = DEFAULT_SETTINGS.TYPE,
-			scrollAnimationDirection = DEFAULT_SETTINGS.DIRECTION,
-			scrollAnimationThreshold = DEFAULT_SETTINGS.THRESHOLD,
-			scrollAnimationDuration = DEFAULT_SETTINGS.DURATION,
-			scrollAnimationDelay = DEFAULT_SETTINGS.DELAY,
-			scrollAnimationRepeat = DEFAULT_SETTINGS.REPEAT
+			motionEnabled,
+			motionPreset,
+			motionDelay,
+			motionDuration,
+			motionEasing,
+			motionStartThreshold,
+			motionEndThreshold,
+			motionPlayOnce
 		} = attributes;
 
+		const presetOptions = [
+			{ label: __("Fade", "motion-blocks"), value: "fade" },
+			{ label: __("Slide Up", "motion-blocks"), value: "slide-up" },
+			{ label: __("Slide Down", "motion-blocks"), value: "slide-down" },
+			{ label: __("Slide Left", "motion-blocks"), value: "slide-left" },
+			{
+				label: __("Slide Right", "motion-blocks"),
+				value: "slide-right"
+			},
+			{ label: __("Zoom In", "motion-blocks"), value: "zoom-in" },
+			{ label: __("Zoom Out", "motion-blocks"), value: "zoom-out" },
+			{ label: __("Rotate", "motion-blocks"), value: "rotate" },
+			{ label: __("Flip X", "motion-blocks"), value: "flip-x" },
+			{ label: __("Flip Y", "motion-blocks"), value: "flip-y" },
+			{ label: __("Blur", "motion-blocks"), value: "blur" }
+		];
+
+		const easingOptions = [
+			{ label: __("Ease", "motion-blocks"), value: "ease" },
+			{ label: __("Ease In", "motion-blocks"), value: "ease-in" },
+			{ label: __("Ease Out", "motion-blocks"), value: "ease-out" },
+			{
+				label: __("Ease In Out", "motion-blocks"),
+				value: "ease-in-out"
+			},
+			{ label: __("Linear", "motion-blocks"), value: "linear" }
+		];
+
 		return (
-			<>
+			<Fragment>
 				<BlockEdit {...props} />
 				<InspectorControls>
-					<PanelBody
-						title={__("Scroll Animation", "scroll-animations")}
-						initialOpen={false}>
+					<PanelBody title={__("Motion", "motion-blocks")} initialOpen={false}>
 						<ToggleControl
-							label={__("Enable Scroll Animation", "scroll-animations")}
-							checked={scrollAnimationEnabled}
-							onChange={(value) =>
-								setAttributes({ scrollAnimationEnabled: value })
-							}
+							label={__("Enable Motion", "motion-blocks")}
+							checked={motionEnabled}
+							onChange={(value) => setAttributes({ motionEnabled: value })}
 						/>
-						{scrollAnimationEnabled && (
-							<div className='scroll-animation-controls'>
+
+						{motionEnabled && (
+							<Fragment>
 								<SelectControl
-									label={__("Animation Type", "scroll-animations")}
-									value={scrollAnimationType}
-									options={[
-										{
-											label: __("Fade", "scroll-animations"),
-											value: ANIMATION_TYPES.FADE
-										},
-										{
-											label: __("Slide", "scroll-animations"),
-											value: ANIMATION_TYPES.SLIDE
-										},
-										{
-											label: __("Spring", "scroll-animations"),
-											value: ANIMATION_TYPES.SPRING
-										}
-									]}
-									onChange={(value) =>
-										setAttributes({ scrollAnimationType: value })
-									}
+									label={__("Animation Preset", "motion-blocks")}
+									value={motionPreset}
+									options={presetOptions}
+									onChange={(value) => setAttributes({ motionPreset: value })}
 								/>
-								{scrollAnimationType === ANIMATION_TYPES.SLIDE && (
-									<SelectControl
-										label={__("Direction", "scroll-animations")}
-										value={scrollAnimationDirection}
-										options={[
-											{
-												label: __("Center", "scroll-animations"),
-												value: ANIMATION_DIRECTIONS.CENTER
-											},
-											{
-												label: __("Up", "scroll-animations"),
-												value: ANIMATION_DIRECTIONS.UP
-											},
-											{
-												label: __("Down", "scroll-animations"),
-												value: ANIMATION_DIRECTIONS.DOWN
-											},
-											{
-												label: __("Left", "scroll-animations"),
-												value: ANIMATION_DIRECTIONS.LEFT
-											},
-											{
-												label: __("Right", "scroll-animations"),
-												value: ANIMATION_DIRECTIONS.RIGHT
-											}
-										]}
-										onChange={(value) =>
-											setAttributes({ scrollAnimationDirection: value })
-										}
-									/>
-								)}
-								<ToggleControl
-									label={__("Repeat Animation", "scroll-animations")}
-									help={__(
-										"Enable to trigger animation every time element enters viewport",
-										"scroll-animations"
-									)}
-									checked={scrollAnimationRepeat}
-									onChange={(value) =>
-										setAttributes({ scrollAnimationRepeat: value })
-									}
-								/>
+
 								<RangeControl
-									label={__("Threshold", "scroll-animations")}
-									value={scrollAnimationThreshold}
+									label={__("Delay (ms)", "motion-blocks")}
+									value={motionDelay}
+									onChange={(value) => setAttributes({ motionDelay: value })}
+									min={0}
+									max={2000}
+									step={100}
+								/>
+
+								<RangeControl
+									label={__("Duration (ms)", "motion-blocks")}
+									value={motionDuration}
 									onChange={(value) =>
-										setAttributes({ scrollAnimationThreshold: value })
+										setAttributes({
+											motionDuration: value
+										})
+									}
+									min={100}
+									max={3000}
+									step={100}
+								/>
+
+								<SelectControl
+									label={__("Easing", "motion-blocks")}
+									value={motionEasing}
+									options={easingOptions}
+									onChange={(value) => setAttributes({ motionEasing: value })}
+								/>
+
+								<RangeControl
+									label={__("Start Threshold", "motion-blocks")}
+									value={motionStartThreshold}
+									onChange={(value) =>
+										setAttributes({
+											motionStartThreshold: value
+										})
 									}
 									min={0}
 									max={1}
 									step={0.1}
 								/>
+
 								<RangeControl
-									label={__("Duration (ms)", "scroll-animations")}
-									value={scrollAnimationDuration}
+									label={__("End Threshold", "motion-blocks")}
+									value={motionEndThreshold}
 									onChange={(value) =>
-										setAttributes({ scrollAnimationDuration: value })
+										setAttributes({
+											motionEndThreshold: value
+										})
 									}
 									min={0}
-									max={5000}
-									step={100}
+									max={1}
+									step={0.1}
 								/>
-								<RangeControl
-									label={__("Delay (ms)", "scroll-animations")}
-									value={scrollAnimationDelay}
+
+								<ToggleControl
+									label={__("Play Once", "motion-blocks")}
+									checked={motionPlayOnce}
 									onChange={(value) =>
-										setAttributes({ scrollAnimationDelay: value })
+										setAttributes({
+											motionPlayOnce: value
+										})
 									}
-									min={0}
-									max={5000}
-									step={100}
 								/>
-							</div>
+							</Fragment>
 						)}
 					</PanelBody>
 				</InspectorControls>
-			</>
+			</Fragment>
 		);
 	};
-}, "withScrollAnimation");
+}, "withMotionControls");
 
 addFilter(
 	"editor.BlockEdit",
-	"scroll-animations/with-scroll-animation",
-	withScrollAnimation
+	"motion-blocks/with-controls",
+	withMotionControls
 );
 
-addFilter(
-	"blocks.registerBlockType",
-	"scroll-animations/add-attributes",
-	(settings, name) => {
-		if (!settings.attributes) {
-			settings.attributes = {};
-		}
+/**
+ * Add motion data attributes to block wrapper.
+ */
+function addMotionProps(props, blockType, attributes) {
+	const { motionEnabled } = attributes;
 
-		settings.attributes.scrollAnimationEnabled = {
-			type: "boolean",
-			default: DEFAULT_SETTINGS.ENABLED
+	if (motionEnabled) {
+		return {
+			...props,
+			"data-motion-enabled": "true",
+			"data-motion-preset": attributes.motionPreset,
+			"data-motion-delay": attributes.motionDelay,
+			"data-motion-duration": attributes.motionDuration,
+			"data-motion-easing": attributes.motionEasing,
+			"data-motion-start-threshold": attributes.motionStartThreshold,
+			"data-motion-end-threshold": attributes.motionEndThreshold,
+			"data-motion-play-once": attributes.motionPlayOnce
 		};
-
-		settings.attributes.scrollAnimationType = {
-			type: "string",
-			default: DEFAULT_SETTINGS.TYPE
-		};
-
-		settings.attributes.scrollAnimationDirection = {
-			type: "string",
-			default: DEFAULT_SETTINGS.DIRECTION
-		};
-
-		settings.attributes.scrollAnimationThreshold = {
-			type: "number",
-			default: DEFAULT_SETTINGS.THRESHOLD
-		};
-
-		settings.attributes.scrollAnimationDuration = {
-			type: "number",
-			default: DEFAULT_SETTINGS.DURATION
-		};
-
-		settings.attributes.scrollAnimationDelay = {
-			type: "number",
-			default: DEFAULT_SETTINGS.DELAY
-		};
-
-		settings.attributes.scrollAnimationRepeat = {
-			type: "boolean",
-			default: DEFAULT_SETTINGS.REPEAT
-		};
-
-		return settings;
 	}
+
+	return props;
+}
+
+addFilter(
+	"blocks.getSaveContent.extraProps",
+	"motion-blocks/add-props",
+	addMotionProps
 );

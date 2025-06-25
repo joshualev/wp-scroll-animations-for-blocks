@@ -1,78 +1,61 @@
 /**
  * Motion Blocks Frontend Styles
- *
- * This file uses a minimal, transition-based animation system.
- * Animations are triggered by adding an `is-visible` class via JavaScript,
- * and they automatically reverse when the class is removed.
+ * 
+ * Minimal styles for Web Animations API implementation.
+ * Animations are now handled entirely in JavaScript using element.animate()
  */
 
 /*
- * 1. Main animation setup for blocks with motion enabled.
+ * Base class for elements with motion enabled
  * ==========================================================================
- * We define the default "hidden" state and the "visible" state, then tell
- * the browser to smoothly transition between them.
+ * This mainly serves as a selector for JavaScript and provides any
+ * base styling needed for animated elements.
  */
 .has-motion[data-motion-enabled="true"] {
-	// Default custom property values. These are overridden by presets below.
-	--motion-slide-distance: 20px;
-	--motion-transform: none;
-	--motion-blur: 5px;
-
-	// This is the "hidden" or "exit" state.
+	// Prevent flash of content - start hidden
 	opacity: 0;
-	filter: blur(var(--motion-blur));
-	transform: var(--motion-transform);
-
-	// This tells the browser to smoothly transition these properties
-	// whenever they change (i.e., when the `.is-visible` class is toggled).
-	transition: opacity var(--motion-duration, 600ms)
-			var(--motion-timing-function, ease-out),
-		transform var(--motion-duration, 600ms)
-			var(--motion-timing-function, ease-out),
-		filter var(--motion-duration, 600ms)
-			var(--motion-timing-function, ease-out);
-
-	// Apply the user-defined delay for the entrance animation.
-	transition-delay: var(--motion-delay, 0ms);
-
-	// This is the "visible" or "entrance" state.
-	// When this class is added, the element transitions TO these styles.
-	// When it's removed, it transitions FROM these styles back to the defaults.
-	&.is-visible {
-		opacity: 1;
-		filter: blur(0);
-		transform: none;
-		// On entrance, we want the delay. On exit, we don't.
-		// Setting the delay to 0 here ensures the exit is immediate.
-		transition-delay: 0ms;
-	}
+	
+	// Ensure the element is ready for animation
+	// The Web Animations API will handle all transform/opacity changes
+	position: relative;
+	
+	// Improve animation performance
+	will-change: transform, opacity, filter;
 }
 
 /*
- * 2. Animation Presets
+ * Performance optimization
  * ==========================================================================
- * We simply override the CSS custom properties to change the "hidden" state.
- * The transition logic handles the rest automatically for all presets.
+ * Help the browser optimize for animations by giving hints about what
+ * properties will be animated.
  */
 .has-motion[data-motion-preset="fade-in"] {
-	--motion-blur: 0;
+	will-change: opacity;
 }
-.has-motion[data-motion-preset="slide-in-up"] {
-	--motion-transform: translateY(var(--motion-slide-distance));
+
+.has-motion[data-motion-preset*="slide-in"] {
+	will-change: transform, opacity;
 }
-.has-motion[data-motion-preset="slide-in-down"] {
-	--motion-transform: translateY(calc(-1 * var(--motion-slide-distance)));
-}
-.has-motion[data-motion-preset="slide-in-left"] {
-	--motion-transform: translateX(var(--motion-slide-distance));
-}
-.has-motion[data-motion-preset="slide-in-right"] {
-	--motion-transform: translateX(calc(-1 * var(--motion-slide-distance)));
-}
+
 .has-motion[data-motion-preset="scale-in"] {
-	--motion-transform: scale(0.95);
-	--motion-blur: 0;
+	will-change: transform, opacity;
 }
+
 .has-motion[data-motion-preset="blur-in"] {
-	--motion-transform: scale(0.98);
+	will-change: transform, opacity, filter;
+}
+
+/*
+ * Accessibility: Respect user preferences
+ * ==========================================================================
+ * Disable animations for users who prefer reduced motion
+ */
+@media (prefers-reduced-motion: reduce) {
+	.has-motion[data-motion-enabled="true"] {
+		// Reset any will-change hints
+		will-change: auto;
+		
+		// Note: JavaScript should also check for this preference
+		// and disable animations accordingly
+	}
 }

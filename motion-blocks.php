@@ -16,31 +16,6 @@ if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-/**
- * Check WordPress version and Interactivity API availability
- */
-function motion_blocks_check_requirements()
-{
-    global $wp_version;
-
-    // Add debug info to admin
-    add_action('admin_notices', function () use ($wp_version) {
-        if (current_user_can('manage_options')) {
-            echo '<div class="notice notice-info"><p>';
-            echo '<strong>Motion Blocks Debug:</strong> WordPress version: ' . $wp_version;
-
-            // Check if Interactivity API functions exist
-            if (function_exists('wp_enqueue_script_module')) {
-                echo ' | wp_enqueue_script_module: ✓';
-            } else {
-                echo ' | wp_enqueue_script_module: ✗';
-            }
-
-            echo '</p></div>';
-        }
-    });
-}
-add_action('init', 'motion_blocks_check_requirements');
 
 /**
  * Initialize the plugin
@@ -123,13 +98,18 @@ function motion_blocks_render_block($block_content, $block)
     $duration = $block['attrs']['motionDuration'] ?? 600;
     $delay = $block['attrs']['motionDelay'] ?? 0;
     $timing_function = $block['attrs']['motionTimingFunction'] ?? 'ease-out';
+    $scroll_enabled = $block['attrs']['motionScrollEnabled'] ?? false;
     $scroll_range = $block['attrs']['motionScrollRange'] ?? 30;
 
     // Create a simplified context for the Interactivity API.
     $context = array(
-        'motionEnabled'     => $block['attrs']['motionEnabled'] ?? false,
-        'motionPreset'      => $preset,
-        'motionScrollRange' => $scroll_range,
+        'motionEnabled'       => $block['attrs']['motionEnabled'] ?? false,
+        'motionPreset'        => $preset,
+        'motionDuration'      => $duration,
+        'motionDelay'         => $delay,
+        'motionTimingFunction' => $timing_function,
+        'motionScrollEnabled' => $scroll_enabled,
+        'motionScrollRange'   => $scroll_range,
     );
 
     // Add WordPress Interactivity API directives to the block
@@ -141,20 +121,13 @@ function motion_blocks_render_block($block_content, $block)
         $processor->set_attribute('data-wp-init', 'callbacks.initMotion');
         $processor->set_attribute('data-wp-context', wp_json_encode($context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP));
 
-        // Add data attributes for CSS targeting and custom properties for styling
+        // Add data attributes for Web Animations API targeting
         $processor->set_attribute('data-motion-enabled', 'true');
         $processor->set_attribute('data-motion-preset', $preset);
-
-        // Pass animation parameters as CSS custom properties
-        $style = sprintf(
-            '--motion-duration: %dms; --motion-delay: %dms; --motion-timing-function: %s; --motion-scroll-range: %d%%;',
-            $duration,
-            $delay,
-            $timing_function,
-            $scroll_range
-        );
         $processor->add_class('has-motion');
-        $processor->set_attribute('style', $style);
+
+        // Animation parameters are now handled directly by the Web Animations API
+        // No need for CSS custom properties
     }
 
     return $processor->get_updated_html();

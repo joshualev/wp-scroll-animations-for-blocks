@@ -58,6 +58,7 @@ function addMotionAttributes(settings) {
 		motionDuration: { type: "number", default: 600 },
 		motionDelay: { type: "number", default: 0 },
 		motionTimingFunction: { type: "string", default: "ease-out" },
+		motionScrollEnabled: { type: "boolean", default: false },
 		motionScrollRange: { type: "number", default: 30 }
 	};
 
@@ -82,6 +83,7 @@ const withMotionControls = createHigherOrderComponent((BlockEdit) => {
 			motionDuration,
 			motionDelay,
 			motionTimingFunction,
+			motionScrollEnabled,
 			motionScrollRange
 		} = attributes;
 
@@ -144,20 +146,34 @@ const withMotionControls = createHigherOrderComponent((BlockEdit) => {
 											}
 										/>
 
-										<RangeControl
-											label={__("Scroll Threshold (%)", "motion-blocks")}
-											value={motionScrollRange}
+										<ToggleControl
+											label={__("Animate on Scroll", "motion-blocks")}
+											checked={motionScrollEnabled}
 											onChange={(value) =>
-												setAttributes({ motionScrollRange: value })
+												setAttributes({ motionScrollEnabled: value })
 											}
-											min={10}
-											max={100}
-											step={10}
 											help={__(
-												"How much of an element should be visible before its one-time animation triggers.",
+												"Enable continuous animation based on scroll position. When disabled, elements only play their entrance animation once.",
 												"motion-blocks"
 											)}
 										/>
+
+										{motionScrollEnabled && (
+											<RangeControl
+												label={__("Scroll Threshold (%)", "motion-blocks")}
+												value={motionScrollRange}
+												onChange={(value) =>
+													setAttributes({ motionScrollRange: value })
+												}
+												min={10}
+												max={100}
+												step={10}
+												help={__(
+													"How much of an element should be visible before scroll animation starts.",
+													"motion-blocks"
+												)}
+											/>
+										)}
 
 										<div
 											style={{
@@ -169,10 +185,15 @@ const withMotionControls = createHigherOrderComponent((BlockEdit) => {
 												background: "#f8f9fa",
 												borderRadius: "4px"
 											}}>
-											<strong>WordPress Interactivity API:</strong> Elements
-											fully visible on page load play entrance animation first.
-											With scroll enabled, they animate when scrolling in/out of
-											view.
+											<strong>Entry Animation:</strong> Elements play their
+											entrance animation when they first become visible.
+											{motionScrollEnabled && (
+												<>
+													<br />
+													<strong>Scroll Animation:</strong> Elements animate
+													progressively as they move through the viewport.
+												</>
+											)}
 										</div>
 									</Fragment>
 								)}

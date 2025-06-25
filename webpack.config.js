@@ -18,7 +18,7 @@ if (Array.isArray(defaultConfig)) {
 		{
 			...moduleConfig,
 			entry: {
-				view: "./src/view.js"
+				view: "./src/view.ts"
 			}
 		}
 	];
@@ -28,7 +28,7 @@ if (Array.isArray(defaultConfig)) {
 		...defaultConfig,
 		entry: {
 			index: ["./src/index.js"],
-			view: "./src/view.js"
+			view: "./src/view.ts"
 		}
 	};
 }

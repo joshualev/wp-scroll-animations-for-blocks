@@ -11,7 +11,7 @@
  * This mainly serves as a selector for JavaScript and provides any
  * base styling needed for animated elements.
  */
-.has-motion[data-motion-enabled="true"] {
+ .has-motion[data-motion-enabled="true"] {
 	// Prevent flash of content - start hidden
 	opacity: 0;
 	

@@ -11,7 +11,7 @@ if (Array.isArray(defaultConfig)) {
 		{
 			...scriptConfig,
 			entry: {
-				index: ["./src/index.js"]
+				index: ["./src/index.tsx"]
 			}
 		},
 		// Module config for frontend
@@ -27,7 +27,7 @@ if (Array.isArray(defaultConfig)) {
 	module.exports = {
 		...defaultConfig,
 		entry: {
-			index: ["./src/index.js"],
+			index: ["./src/index.tsx"],
 			view: "./src/view.ts"
 		}
 	};

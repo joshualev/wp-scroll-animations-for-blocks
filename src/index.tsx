@@ -18,14 +18,21 @@ import { addFilter } from "@wordpress/hooks";
 import { __ } from "@wordpress/i18n";
 
 import type { BlockConfiguration } from "@wordpress/blocks";
-import type { ComponentType } from "@wordpress/element";
+import type { ComponentType } from "react";
 import { 
     ANIMATION_PRESETS, 
     type AnimationPresetValue, 
-    type BlockEditProps,
+    type MotionContext,
     type PresetOption,
     type TimingFunctionOption
 } from "./types";
+
+// BlockEditProps type for editor component
+interface BlockEditProps {
+    attributes: MotionContext & Record<string, any>;
+    setAttributes: (attributes: Partial<MotionContext>) => void;
+    [key: string]: any;
+}
 
 /**
  * Editor dropdown options for animation presets.
@@ -55,22 +62,21 @@ const TIMING_FUNCTION_OPTIONS: TimingFunctionOption[] = [
  * @returns Modified configuration with motion attributes
  */
 function addMotionAttributes(settings: BlockConfiguration): BlockConfiguration {
-    if (!settings.attributes) {
-        settings.attributes = {};
-    }
+    const existingAttributes = settings.attributes || {};
 
-    settings.attributes = {
-        ...settings.attributes,
-        motionEnabled: { type: "boolean", default: false },
-        motionPreset: { type: "string", default: "none" },
-        motionDuration: { type: "number", default: 600 },
-        motionDelay: { type: "number", default: 0 },
-        motionTimingFunction: { type: "string", default: "ease-out" },
-        motionScrollEnabled: { type: "boolean", default: false },
-        motionScrollRange: { type: "number", default: 30 }
+    return {
+        ...settings,
+        attributes: {
+            ...existingAttributes,
+            motionEnabled: { type: "boolean", default: false },
+            motionPreset: { type: "string", default: "none" },
+            motionDuration: { type: "number", default: 600 },
+            motionDelay: { type: "number", default: 0 },
+            motionTimingFunction: { type: "string", default: "ease-out" },
+            motionScrollEnabled: { type: "boolean", default: false },
+            motionScrollRange: { type: "number", default: 30 }
+        }
     };
-
-    return settings;
 }
 
 addFilter(
@@ -108,7 +114,7 @@ const withMotionControls = createHigherOrderComponent(
                             <ToggleControl
                                 label={__("Enable Animation", "motion-blocks")}
                                 checked={motionEnabled}
-                                onChange={(value) => setAttributes({ motionEnabled: value })}
+                                onChange={(value: boolean) => setAttributes({ motionEnabled: value })}
                             />
 
                             {motionEnabled && (
@@ -117,7 +123,7 @@ const withMotionControls = createHigherOrderComponent(
                                         label={__("Animation Effect", "motion-blocks")}
                                         value={motionPreset}
                                         options={PRESET_OPTIONS}
-                                        onChange={(value) => setAttributes({ 
+                                        onChange={(value: string) => setAttributes({ 
                                             motionPreset: value as AnimationPresetValue | "none" 
                                         })}
                                     />
@@ -127,9 +133,11 @@ const withMotionControls = createHigherOrderComponent(
                                             <RangeControl
                                                 label={__("Duration (ms)", "motion-blocks")}
                                                 value={motionDuration}
-                                                onChange={(value) =>
-                                                    value !== undefined && setAttributes({ motionDuration: value })
-                                                }
+                                                onChange={(value?: number) => {
+                                                    if (value !== undefined) {
+                                                        setAttributes({ motionDuration: value });
+                                                    }
+                                                }}
                                                 min={200}
                                                 max={1500}
                                                 step={50}
@@ -138,7 +146,7 @@ const withMotionControls = createHigherOrderComponent(
                                             <RangeControl
                                                 label={__("Delay (ms)", "motion-blocks")}
                                                 value={motionDelay}
-                                                onChange={(value) =>
+                                                onChange={(value?: number) =>
                                                     value !== undefined && setAttributes({ motionDelay: value })
                                                 }
                                                 min={0}
@@ -154,7 +162,7 @@ const withMotionControls = createHigherOrderComponent(
                                                 label={__("Timing Function", "motion-blocks")}
                                                 value={motionTimingFunction}
                                                 options={TIMING_FUNCTION_OPTIONS}
-                                                onChange={(value) =>
+                                                onChange={(value: string) =>
                                                     setAttributes({ motionTimingFunction: value })
                                                 }
                                             />
@@ -162,7 +170,7 @@ const withMotionControls = createHigherOrderComponent(
                                             <ToggleControl
                                                 label={__("Animate on Scroll", "motion-blocks")}
                                                 checked={motionScrollEnabled}
-                                                onChange={(value) =>
+                                                onChange={(value: boolean) =>
                                                     setAttributes({ motionScrollEnabled: value })
                                                 }
                                                 help={__(
@@ -175,7 +183,7 @@ const withMotionControls = createHigherOrderComponent(
                                                 <RangeControl
                                                     label={__("Scroll Threshold (%)", "motion-blocks")}
                                                     value={motionScrollRange}
-                                                    onChange={(value) =>
+                                                    onChange={(value?: number) =>
                                                         value !== undefined && setAttributes({ motionScrollRange: value })
                                                     }
                                                     min={10}

@@ -181,18 +181,7 @@ export interface MotionElement extends HTMLElement {
 // EDITOR INTERFACES  
 // ============================================================================
 
-/**
- * Block edit component props with motion attributes.
- * Used in the WordPress block editor.
- */
-export interface BlockEditProps {
-    /** Block attributes including motion settings */
-    attributes: MotionContext & Record<string, any>;
-    /** Function to update block attributes */
-    setAttributes: (attributes: Partial<MotionContext>) => void;
-    /** Additional props from WordPress */
-    [key: string]: any;
-}
+
 
 /**
  * Dropdown option for animation preset selection.

@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+      "target": "ESNext",
+      "module": "ESNext",
+      "lib": ["DOM", "ESNext"],
+      "jsx": "react-jsx",
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "strict": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "noEmit": true,
+      "baseUrl": ".",
+      "paths": {
+        "@wordpress/*": ["node_modules/@wordpress/*"]
+      },
+      "types": ["node"]
+    },
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "src/global.d.ts"
+    ],
+    "exclude": [
+      "node_modules",
+      "build"
+    ]
+  }

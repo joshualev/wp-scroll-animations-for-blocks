@@ -208,22 +208,3 @@ export function createScrollAnimation(
         }
     }
 }
-
-
-
-/**
- * Registers a one-time callback for when an animation completes.
- * 
- * @param animation - Web Animation instance to monitor
- * @param callback - Function to call when animation finishes
- * 
- * @example
- * ```typescript
- * onAnimationFinish(animation, () => {
- *   console.log('Animation completed!');
- * });
- * ```
- */
-export function onAnimationFinish(animation: Animation, callback: () => void): void {
-    animation.addEventListener("finish", callback, { once: true });
-} 

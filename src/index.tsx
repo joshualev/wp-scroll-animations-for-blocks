@@ -21,9 +21,9 @@ import type { BlockConfiguration } from "@wordpress/blocks";
 import type { ComponentType } from "react";
 import { 
     ANIMATION_PRESETS, 
-    type AnimationPresetValue, 
+    type AnimationTypeValue, 
     type MotionContext,
-    type PresetOption,
+    type TypeOption,
     type TimingFunctionOption
 } from "./types";
 
@@ -37,9 +37,9 @@ interface BlockEditProps {
 /**
  * Editor dropdown options for animation presets.
  */
-const PRESET_OPTIONS: PresetOption[] = [
+const PRESET_OPTIONS: TypeOption[] = [
     { label: __("None", "motion-blocks"), value: "none" },
-    ...ANIMATION_PRESETS.map((preset): PresetOption => ({
+    ...ANIMATION_PRESETS.map((preset): TypeOption => ({
         label: __(preset.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), "motion-blocks"),
         value: preset
     }))
@@ -69,7 +69,7 @@ function addMotionAttributes(settings: BlockConfiguration): BlockConfiguration {
         attributes: {
             ...existingAttributes,
             motionEnabled: { type: "boolean", default: false },
-            motionPreset: { type: "string", default: "none" },
+            motionType: { type: "string", default: "none" },
             motionDuration: { type: "number", default: 600 },
             motionDelay: { type: "number", default: 0 },
             motionTimingFunction: { type: "string", default: "ease-out" },
@@ -95,7 +95,7 @@ const withMotionControls = createHigherOrderComponent(
             const { attributes, setAttributes } = props;
             const {
                 motionEnabled,
-                motionPreset,
+                motionType,
                 motionDuration,
                 motionDelay,
                 motionTimingFunction,
@@ -121,14 +121,14 @@ const withMotionControls = createHigherOrderComponent(
                                 <Fragment>
                                     <SelectControl
                                         label={__("Animation Effect", "motion-blocks")}
-                                        value={motionPreset}
+                                        value={motionType}
                                         options={PRESET_OPTIONS}
                                         onChange={(value: string) => setAttributes({ 
-                                            motionPreset: value as AnimationPresetValue | "none" 
+                                            motionType: value as AnimationTypeValue | "none" 
                                         })}
                                     />
 
-                                    {motionPreset !== "none" && (
+                                    {motionType !== "none" && (
                                         <Fragment>
                                             <RangeControl
                                                 label={__("Duration (ms)", "motion-blocks")}

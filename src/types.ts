@@ -4,7 +4,7 @@
  * 
  * This file contains all type definitions for the Motion Blocks plugin.
  * It provides a centralized location for:
- * - Animation presets and states
+ * - Animation types and states
  * - Configuration interfaces
  * - Runtime element tracking
  * - Web Animations API wrappers
@@ -15,10 +15,10 @@
 // ============================================================================
 
 /**
- * Available animation preset names.
+ * Available animation type names.
  * These correspond to CSS animation keyframes and are used throughout the plugin.
  */
-export enum AnimationPreset {
+export enum AnimationType {
     FADE_IN = "fade-in",
     SLIDE_IN_UP = "slide-in-up", 
     SLIDE_IN_DOWN = "slide-in-down",
@@ -46,61 +46,47 @@ export enum AnimationState {
 }
 
 /**
- * Array of all available animation presets for iteration.
- * Automatically derived from the AnimationPreset enum.
+ * Array of all available animation types for iteration.
+ * Automatically derived from the AnimationType enum.
  */
-export const ANIMATION_PRESETS = Object.values(AnimationPreset);
+export const ANIMATION_PRESETS = Object.values(AnimationType);
 
 // ============================================================================
 // UNION TYPES
 // ============================================================================
 
 /**
- * Valid animation preset values (string literals).
+ * Valid animation type values (string literals).
  * These are the actual string values stored in block attributes.
  */
-export type AnimationPresetValue = `${AnimationPreset}`;
+export type AnimationTypeValue = `${AnimationType}`;
 
-/**
- * Animation state values (string literals).
- */
-export type AnimationStateValue = `${AnimationState}`;
 
 // ============================================================================
 // TYPE GUARDS & UTILITIES
 // ============================================================================
 
 /**
- * Type guard to check if a string is a valid animation preset.
+ * Type guard to check if a string is a valid animation type.
  * 
  * @param value - String to check
- * @returns True if value is a valid animation preset
+ * @returns True if value is a valid animation type
  */
-export function isAnimationPreset(value: string): value is AnimationPresetValue {
-    return Object.values(AnimationPreset).includes(value as AnimationPreset);
+export function isAnimationType(value: string): value is AnimationTypeValue {
+    return Object.values(AnimationType).includes(value as AnimationType);
 }
 
 /**
- * Safely converts a string to an AnimationPreset enum value.
+ * Safely converts a string to an AnimationType enum value.
  * 
  * @param value - String value from block attributes
- * @returns AnimationPreset enum value or null if invalid
+ * @returns AnimationType enum value or null if invalid
  */
-export function toAnimationPreset(value: string): AnimationPreset | null {
-    if (isAnimationPreset(value)) {
-        return value as AnimationPreset;
+export function toAnimationType(value: string): AnimationType | null {
+    if (isAnimationType(value)) {
+        return value as AnimationType;
     }
     return null;
-}
-
-/**
- * Converts an AnimationPreset enum to its string value.
- * 
- * @param preset - AnimationPreset enum value
- * @returns String value
- */
-export function fromAnimationPreset(preset: AnimationPreset): AnimationPresetValue {
-    return preset as AnimationPresetValue;
 }
 
 // ============================================================================
@@ -114,8 +100,8 @@ export function fromAnimationPreset(preset: AnimationPreset): AnimationPresetVal
 export interface MotionContext {
     /** Whether motion animations are enabled for this block */
     motionEnabled: boolean;
-    /** Which animation preset to use, or "none" to disable */
-    motionPreset: AnimationPresetValue | "none";
+    /** Which animation type to use, or "none" to disable */
+    motionType: AnimationTypeValue | "none";
     /** Animation duration in milliseconds */
     motionDuration: number;
     /** Delay before animation starts in milliseconds */
@@ -184,13 +170,13 @@ export interface MotionElement extends HTMLElement {
 
 
 /**
- * Dropdown option for animation preset selection.
+ * Dropdown option for animation type selection.
  */
-export interface PresetOption {
+export interface TypeOption {
     /** Display label for the option */
     label: string;
     /** Value to store in block attributes */
-    value: AnimationPresetValue | "none";
+    value: AnimationTypeValue | "none";
 }
 
 /**

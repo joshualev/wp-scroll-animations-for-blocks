@@ -93,8 +93,8 @@ function motion_blocks_render_block($block_content, $block)
     // Skip blocks without motion enabled
     if (
         empty($motion_attrs['motionEnabled']) ||
-        empty($motion_attrs['motionPreset']) ||
-        $motion_attrs['motionPreset'] === 'none'
+        empty($motion_attrs['motionType']) ||
+        $motion_attrs['motionType'] === 'none'
     ) {
         return $block_content;
     }
@@ -107,7 +107,7 @@ function motion_blocks_render_block($block_content, $block)
     // Build context object for frontend script
     $motion_context = array(
         'motionEnabled'       => true,
-        'motionPreset'        => $motion_attrs['motionPreset'],
+        'motionType'        => $motion_attrs['motionType'],
         'motionDuration'      => $motion_attrs['motionDuration'] ?? 600,
         'motionDelay'         => $motion_attrs['motionDelay'] ?? 0,
         'motionTimingFunction' => $motion_attrs['motionTimingFunction'] ?? 'ease-out',
@@ -129,7 +129,7 @@ function motion_blocks_render_block($block_content, $block)
 
         // Add utility attributes for debugging and CSS targeting
         $processor->set_attribute('data-motion-enabled', 'true');
-        $processor->set_attribute('data-motion-preset', $motion_attrs['motionPreset']);
+        $processor->set_attribute('data-motion-type', $motion_attrs['motionType']);
         $processor->add_class('has-motion');
     }
 

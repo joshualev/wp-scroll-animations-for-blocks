@@ -7,23 +7,23 @@
  * entrance animations and scroll-driven animations using the Web Animations API.
  */
 
-import { AnimationPreset, type WebAnimationTiming } from "./types";
+import { AnimationType, type WebAnimationTiming } from "./types";
 
 /* -------------------------------------------------- */
 /*  Keyframe map                                      */
 /* -------------------------------------------------- */
 
 /**
- * Keyframe definitions for all animation presets.
- * Each preset defines the visual transformation applied to elements.
+ * Keyframe definitions for all animation types.
+ * Each type defines the visual transformation applied to elements.
  */
-export const ANIMATION_KEYFRAMES: Record<AnimationPreset, Keyframe[]> = {
-    [AnimationPreset.FADE_IN]: [
+export const ANIMATION_KEYFRAMES: Record<AnimationType, Keyframe[]> = {
+    [AnimationType.FADE_IN]: [
         { opacity: 0 },
         { opacity: 1 }
     ],
 
-    [AnimationPreset.SLIDE_IN_UP]: [
+    [AnimationType.SLIDE_IN_UP]: [
         { 
             opacity: 0, 
             transform: "translateY(30px)" 
@@ -34,7 +34,7 @@ export const ANIMATION_KEYFRAMES: Record<AnimationPreset, Keyframe[]> = {
         }
     ],
 
-    [AnimationPreset.SLIDE_IN_DOWN]: [
+    [AnimationType.SLIDE_IN_DOWN]: [
         { 
             opacity: 0, 
             transform: "translateY(-30px)" 
@@ -45,7 +45,7 @@ export const ANIMATION_KEYFRAMES: Record<AnimationPreset, Keyframe[]> = {
         }
     ],
 
-    [AnimationPreset.SLIDE_IN_LEFT]: [
+    [AnimationType.SLIDE_IN_LEFT]: [
         { 
             opacity: 0, 
             transform: "translateX(-30px)" 
@@ -56,7 +56,7 @@ export const ANIMATION_KEYFRAMES: Record<AnimationPreset, Keyframe[]> = {
         }
     ],
 
-    [AnimationPreset.SLIDE_IN_RIGHT]: [
+    [AnimationType.SLIDE_IN_RIGHT]: [
         { 
             opacity: 0, 
             transform: "translateX(30px)" 
@@ -67,7 +67,7 @@ export const ANIMATION_KEYFRAMES: Record<AnimationPreset, Keyframe[]> = {
         }
     ],
 
-    [AnimationPreset.SCALE_IN]: [
+    [AnimationType.SCALE_IN]: [
         { 
             opacity: 0, 
             transform: "scale(0.8)" 
@@ -78,7 +78,7 @@ export const ANIMATION_KEYFRAMES: Record<AnimationPreset, Keyframe[]> = {
         }
     ],
 
-    [AnimationPreset.BLUR_IN]: [
+    [AnimationType.BLUR_IN]: [
         { 
             opacity: 0, 
             filter: "blur(10px)" 
@@ -116,20 +116,20 @@ export const supportsViewTimeline = (): boolean => {
  * Creates an entrance animation using the Web Animations API.
  * 
  * @param element - Target element to animate
- * @param preset - Animation preset to apply
+ * @param type - Animation type to apply
  * @param timing - Animation timing configuration
  * @returns Web Animation instance
  */
 export function createEntranceAnimation(
     element: Element,
-    preset: AnimationPreset,
+    type: AnimationType,
     timing: WebAnimationTiming
 ): Animation | null {
     try {
-        const keyframes = ANIMATION_KEYFRAMES[preset];
+        const keyframes = ANIMATION_KEYFRAMES[type];
         
         if (!keyframes) {
-            console.error(`Unknown animation preset: ${preset}`);
+            console.error(`Unknown animation type: ${type}`);
             return null;
         }
 
@@ -151,24 +151,24 @@ export function createEntranceAnimation(
  * Creates a scroll-driven animation using Web Animations API with ViewTimeline.
  * 
  * @param element - Target element to animate
- * @param preset - Animation preset to apply
+ * @param type - Animation type to apply
  * @param scrollRange - Scroll threshold percentage (0-100)
  * @returns Animation instance or null if failed
  */
 export function createScrollAnimation(
     element: Element,
-    preset: AnimationPreset,
+    type: AnimationType,
     scrollRange: number
 ): Animation | null {
     try {
-        const keyframes = ANIMATION_KEYFRAMES[preset];
+        const keyframes = ANIMATION_KEYFRAMES[type];
         if (!keyframes) {
-            console.error(`Motion Blocks: Unknown animation preset: ${preset}`);
+            console.error(`Motion Blocks: Unknown animation type: ${type}`);
             return null;
         }
 
         console.log(`Motion Blocks: Creating scroll animation with Web Animations API`);
-        console.log(`  - Preset: ${preset}`);
+        console.log(`  - Type: ${type}`);
         console.log(`  - Scroll range: ${scrollRange}%`);
 
         // Create ViewTimeline with proper options

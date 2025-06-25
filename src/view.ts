@@ -9,7 +9,7 @@
 import { store, getElement, getContext } from "@wordpress/interactivity";
 import { 
     AnimationState, 
-    toAnimationPreset,
+    toAnimationType,
     type MotionContext, 
     type MotionElement, 
     type MotionOptions, 
@@ -28,43 +28,40 @@ store("motion-blocks", {
          * Called when element mounts via `data-wp-init="callbacks.initMotion"`.
          */
         initMotion() {
-            const context = getContext<MotionContext>();
+            const motionContext = getContext<MotionContext>();
             // Use getElement() to get the current element in WordPress Interactivity API
-            const element = getElement().ref as MotionElement;
+            const motionElement = getElement().ref as MotionElement;
 
-            console.log("Motion Blocks: Initializing element", element);
             console.log("Motion Blocks: Context:", {
-                motionEnabled: context?.motionEnabled,
-                motionPreset: context?.motionPreset,
-                motionScrollEnabled: context?.motionScrollEnabled,
-                motionScrollRange: context?.motionScrollRange,
-                motionDuration: context?.motionDuration
+                motionEnabled: motionContext?.motionEnabled,
+                motionType: motionContext?.motionType,
+                motionScrollEnabled: motionContext?.motionScrollEnabled,
+                motionScrollRange: motionContext?.motionScrollRange,
+                motionDuration: motionContext?.motionDuration
             });
 
-            if (!element || !context?.motionEnabled) {
-                console.log("Motion Blocks: Skipping - element missing or motion disabled");
-                if (!element) console.log("  - No element found");
-                if (!context?.motionEnabled) console.log("  - Motion not enabled in context");
+            if (!motionElement || !motionContext?.motionEnabled) {
+                console.warn("Motion Blocks: Skipping - element missing or motion disabled");
                 return;
             }
 
             // Skip if user prefers reduced motion
             if (prefersReducedMotion()) {
-                console.log("Motion Blocks: Animations disabled due to reduced motion preference");
+                console.warn("Motion Blocks: Animations disabled due to reduced motion preference");
                 return;
             }
 
-            // Validate animation preset
-            if (!context.motionPreset || context.motionPreset === "none") {
+            // Validate animation type
+            if (!motionContext.motionType || motionContext.motionType === "none") {
                 return;
             }
 
             try {
-                initializeElementMotion(element, context);
+                initializeElementMotion(motionElement, motionContext);
             } catch (error) {
                 console.error("Motion Blocks: Failed to initialize animation:", error);
                 // Fallback: make element visible if animation fails
-                element.style.opacity = "1";
+                motionElement.style.opacity = "1";
             }
         }
     }
@@ -76,27 +73,27 @@ store("motion-blocks", {
  * @param element - Target element to animate
  * @param context - Motion configuration from block attributes
  */
-function initializeElementMotion(element: MotionElement, context: MotionContext): void {
-    console.log("Motion Blocks: Initializing element motion with context:", context);
+function initializeElementMotion(motionElement: MotionElement, motionContext: MotionContext): void {
+    console.log("Motion Blocks: Initializing element motion with context:", motionContext);
 
     // Initialize element state
-    element._motionState = AnimationState.IDLE;
-    element._animations = {};
-    element._observers = [];
+    motionElement._motionState = AnimationState.IDLE;
+    motionElement._animations = {};
+    motionElement._observers = [];
 
-    // Create motion options from context
+    // Create motionOptions from motionContext
     const motionOptions: MotionOptions = {
-        duration: context.motionDuration || 600,
-        delay: context.motionDelay || 0,
-        easing: context.motionTimingFunction || "ease-out",
+        duration: motionContext.motionDuration || 600,
+        delay: motionContext.motionDelay || 0,
+        easing: motionContext.motionTimingFunction || "ease-out",
         fill: "forwards",
-        threshold: Math.max(0.1, Math.min(1, (context.motionScrollRange || 30) / 100)) // Clamp between 0.1-1
+        threshold: Math.max(0.1, Math.min(1, (motionContext.motionScrollRange || 30) / 100)) // Clamp between 0.1-1
     };
 
-    console.log("Motion Blocks: Motion options:", motionOptions);
+    console.log("Motion Blocks: MotionOptions:", motionOptions);
 
     // Start observing for element visibility
-    observeElementForAnimation(element, context, motionOptions);
+    observeElementForAnimation(motionElement, motionContext, motionOptions);
 }
 
 /**
@@ -107,11 +104,11 @@ function initializeElementMotion(element: MotionElement, context: MotionContext)
  * @param options - Resolved animation options
  */
 function observeElementForAnimation(
-    element: MotionElement, 
-    context: MotionContext, 
-    options: MotionOptions
+    motionElement: MotionElement, 
+    motionContext: MotionContext, 
+    motionOptions: MotionOptions
 ): void {
-    console.log(`Motion Blocks: Setting up visibility observer with threshold ${options.threshold}`);
+    console.log(`Motion Blocks: Setting up visibility observer with threshold ${motionOptions.threshold}`);
 
     // Create intersection observer to watch for element visibility
     const observer = new IntersectionObserver((entries) => {
@@ -123,30 +120,30 @@ function observeElementForAnimation(
             console.log("Motion Blocks: Element became visible");
             
             // if the element is not idle, then the element is already animating
-            if (element._motionState !== AnimationState.IDLE) {
-                console.log(`Motion Blocks: Skipping animation - element state is ${element._motionState}`);
+            if (motionElement._motionState !== AnimationState.IDLE) {
+                console.log(`Motion Blocks: Skipping animation - element state is ${motionElement._motionState}`);
                 return;
             }
 
             // this is the entrance animation that is being started
             console.log("Motion Blocks: Starting entrance animation");
-            startEntranceAnimation(element, context, options);
+            startEntranceAnimation(motionElement, motionContext, motionOptions);
             
             // Disconnect observer since we only want to trigger once
             observer.disconnect();
         }
     }, {
-        threshold: options.threshold,
+        threshold: motionOptions.threshold,
         rootMargin: "50px"
     });
 
-    observer.observe(element);
+    observer.observe(motionElement);
     
     // Store observer reference for cleanup
-    if (!element._observers) {
-        element._observers = [];
+    if (!motionElement._observers) {
+        motionElement._observers = [];
     }
-    element._observers.push(observer);
+    motionElement._observers.push(observer);
 }
 
 /**
@@ -154,55 +151,54 @@ function observeElementForAnimation(
  * 
  * @param element - Target element to animate
  * @param context - Motion configuration
- * @param options - Animation timing options
+ * @param motionOptions - Animation timing options
  */
 function startEntranceAnimation(
-    element: MotionElement,
-    context: MotionContext,
-    options: MotionOptions
+    motionElement: MotionElement,
+    motionContext: MotionContext,
+    motionOptions: MotionOptions
 ): void {
-    console.log(`Motion Blocks: Starting entrance animation with preset: ${context.motionPreset}`);
-    element._motionState = AnimationState.ENTRY_PLAYING;
+    console.log(`Motion Blocks: Starting entrance animation with type: ${motionContext.motionType}`);
+    motionElement._motionState = AnimationState.ENTRY_PLAYING;
 
-    // Convert string preset to enum safely
-    const preset = toAnimationPreset(context.motionPreset);
-    if (!preset) {
-        console.warn(`Motion Blocks: Invalid animation preset: ${context.motionPreset}`);
-        element.style.opacity = "1"; // Fallback visibility
+    // Convert string type to enum safely
+    const type = toAnimationType(motionContext.motionType);
+    if (!type) {
+        console.warn(`Motion Blocks: Invalid animation type: ${motionContext.motionType}`);
+        motionElement.style.opacity = "1"; // Fallback visibility
         return;
     }
 
-    const animation = createEntranceAnimation(element, preset, options);
+    const animation = createEntranceAnimation(motionElement, type, motionOptions);
 
     if (!animation) {
         console.warn("Motion Blocks: Failed to create entrance animation");
         // Fallback: make element visible
-        element.style.opacity = "1";
-        element._motionState = AnimationState.ENTRY_COMPLETE;
+        motionElement.style.opacity = "1";
+        motionElement._motionState = AnimationState.ENTRY_COMPLETE;
         return;
     }
 
     // Store animation reference
-    element._animations!.entrance = animation;
+    motionElement._animations!.entrance = animation;
 
     // Handle animation completion
     animation.addEventListener("finish", () => {
-        console.log("Motion Blocks: Entrance animation completed successfully");
-        element._motionState = AnimationState.ENTRY_COMPLETE;
+        console.info("Motion Blocks: Entrance animation completed successfully");
+        motionElement._motionState = AnimationState.ENTRY_COMPLETE;
 
         // Start watching for element to leave viewport if scroll animation enabled
-        if (context.motionScrollEnabled) {
-            console.log("Motion Blocks: Scroll animation enabled - watching for element to leave viewport");
-            observeForElementToLeaveAndReturn(element, context);
+        if (motionContext.motionScrollEnabled) {
+            observeForElementToLeaveAndReturn(motionElement, motionContext);
         } else {
-            console.log("Motion Blocks: Scroll animation disabled, staying in static state");
+            console.info("Motion Blocks: Scroll animation disabled, staying in static state");
         }
     });
 
     animation.addEventListener("cancel", () => {
         console.warn("Motion Blocks: Entrance animation was cancelled");
-        element.style.opacity = "1"; // Ensure visibility
-        element._motionState = AnimationState.ENTRY_COMPLETE;
+        motionElement.style.opacity = "1"; // Ensure visibility
+        motionElement._motionState = AnimationState.ENTRY_COMPLETE;
     });
 
     console.log("Motion Blocks: Entrance animation started successfully");
@@ -220,7 +216,7 @@ function startEntranceAnimation(
  * This ensures scroll animation only activates after entrance is complete and element
  * has been out of view and comes back.
  */
-function observeForElementToLeaveAndReturn(element: MotionElement, context: MotionContext): void {
+function observeForElementToLeaveAndReturn(motionElement: MotionElement, motionContext: MotionContext): void {
     console.log("Motion Blocks: Setting up observer to watch element leaving viewport");
 
     let hasLeftViewport = false;
@@ -236,20 +232,20 @@ function observeForElementToLeaveAndReturn(element: MotionElement, context: Moti
             // Element has returned to viewport after leaving
             console.log("Motion Blocks: Element returned to viewport - setting up scroll animation");
             observer.disconnect(); // Stop watching
-            setupScrollAnimation(element, context);
+            setupScrollAnimation(motionElement, motionContext);
         }
     }, {
         threshold: 0,
         rootMargin: "50px"
     });
 
-    observer.observe(element);
+    observer.observe(motionElement);
     
     // Store observer reference for cleanup
-    if (!element._observers) {
-        element._observers = [];
+    if (!motionElement._observers) {
+        motionElement._observers = [];
     }
-    element._observers.push(observer);
+    motionElement._observers.push(observer);
 }
 
 /**
@@ -266,17 +262,17 @@ function setupScrollAnimation(element: MotionElement, context: MotionContext): v
         return;
     }
 
-    // Convert string preset to enum safely
-    const preset = toAnimationPreset(context.motionPreset);
-    if (!preset) {
-        console.warn(`Motion Blocks: Invalid animation preset for scroll: ${context.motionPreset}`);
+    // Convert string type to enum safely
+    const type = toAnimationType(context.motionType);
+    if (!type) {
+        console.warn(`Motion Blocks: Invalid animation type for scroll: ${context.motionType}`);
         return;
     }
 
     // Create scroll animation - this should return Animation instance now
     const animation = createScrollAnimation(
         element,
-        preset,
+        type,
         context.motionScrollRange || 30
     );
 

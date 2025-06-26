@@ -46,12 +46,6 @@ export function createScrollAnimation(
             return null;
         }
 
-        console.log(`Motion Blocks: Creating scroll animation with Web Animations API`);
-        console.log(`  - Type: ${animationType}`);
-        console.log(`  - Scroll range: ${scrollRange}%`);
-        console.log(`  - Using scroll-specific keyframes:`, keyframes);
-
-
         // Create ViewTimeline with proper options
         const viewTimelineOptions: ViewTimelineOptions = {
             subject: motionElement,
@@ -68,7 +62,6 @@ export function createScrollAnimation(
             timeline: viewTimeline
         });
 
-        console.log(`Motion Blocks: Scroll animation created:`, animation);
         return animation;
 
     } catch (error) {

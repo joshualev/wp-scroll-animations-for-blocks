@@ -35,8 +35,6 @@ export function createEntranceAnimation(
             return null;
         }
 
-        console.log("Creating entrance animation with keyframes:", keyframes, "timing:", timing);
-
         return motionElement.animate(keyframes, {
             duration: timing.duration,
             delay: timing.delay,

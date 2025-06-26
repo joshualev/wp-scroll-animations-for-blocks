@@ -33,9 +33,9 @@ store("motion-blocks", {
 
             console.log("Motion Blocks: Initializing with context:", {
                 motionEnabled: motionContext?.motionEnabled,
-                motionType: motionContext?.motionType,
-                motionScrollEnabled: motionContext?.motionScrollEnabled,
-                motionScrollRange: motionContext?.motionScrollRange,
+                entranceAnimationType: motionContext?.entranceAnimationType,
+                scrollAnimationType: motionContext?.scrollAnimationType,
+                motionThreshold: motionContext?.motionThreshold,
                 motionDuration: motionContext?.motionDuration
             });
 
@@ -51,7 +51,7 @@ store("motion-blocks", {
                 return;
             }
 
-            if (!motionContext.motionType) {
+            if (!motionContext.entranceAnimationType) {
                 console.warn("Motion Blocks: No animation type specified");
                 return;
             }

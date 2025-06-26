@@ -1,86 +1,73 @@
 /**
  * Entrance Animation Handler
  * 
- * Handles creation and management of entrance animations.
- * Manages animation lifecycle and transitions to scroll animations.
+ * Manages entrance animation lifecycle and transition to scroll animations.
  */
 
-import { MotionContext, MotionElement, MotionOptions, MotionState } from "@/shared/types";
+import { MotionContext, MotionElement, EntranceAnimationOptions, MotionState, EntranceAnimationType } from "@/shared/types";
+import { getEntranceAnimationType } from "@/frontend/utils/get-animation-type";
 import { createEntranceAnimation } from "@/frontend/animations/create-entrance-animation";
-import { getAnimationType } from "@/frontend/utils/get-animation-type";
-import { observeScrollTransition } from "@/frontend/observers/scroll-observer";
+
+
 
 /**
- * Starts the entrance animation for an element and manages its lifecycle.
+ * Initiates entrance animation for an element.
+ * Sets up the animation and handles state transitions.
  * 
  * @param motionElement - Target element to animate
- * @param motionContext - Motion configuration
- * @param motionOptions - Animation timing options
+ * @param motionContext - Motion configuration from block attributes
+ * @param entranceOptions - Entrance animation timing and threshold options
  */
 export function startEntranceAnimation(
     motionElement: MotionElement,
     motionContext: MotionContext,
-    motionOptions: MotionOptions
+    entranceOptions: EntranceAnimationOptions
 ): void {
-    console.log(`Motion Blocks: Starting entrance animation with type: ${motionContext.motionType}`);
+    console.log("Motion Blocks: Starting entrance animation");
+    
+    // Update element state
     motionElement._motionState = MotionState.ENTRY_PLAYING;
-
-    // Convert string type to enum safely
-    const animationType = getAnimationType(motionContext.motionType);
+    
+    // Get animation type from context
+    const animationType = getEntranceAnimationType(motionContext.entranceAnimationType);
     if (!animationType) {
-        console.warn(`Motion Blocks: Invalid animation type: ${motionContext.motionType}`);
-        fallbackToVisible(motionElement);
+        console.warn("Motion Blocks: No valid animation type found");
         return;
     }
-
+    
+    // Create and start entrance animation using correct function signature
     const animation = createEntranceAnimation({
         motionElement: motionElement,
         animationType: animationType,
-        timing: motionOptions
+        timing: {
+            duration: entranceOptions.duration,
+            delay: entranceOptions.delay,
+            easing: entranceOptions.easing,
+            fill: entranceOptions.fill
+        }
     });
-
+    
+    // Handle null return from animation creation
     if (!animation) {
         console.warn("Motion Blocks: Failed to create entrance animation");
-        fallbackToVisible(motionElement);
         return;
     }
-
+    
     // Store animation reference
-    motionElement._animations!.entrance = animation;
-
+    if (!motionElement._animations) {
+        motionElement._animations = {};
+    }
+    motionElement._animations.entrance = animation;
+    
     // Handle animation completion
     animation.addEventListener("finish", () => {
-        onEntranceComplete(motionElement, motionContext);
+        console.log("Motion Blocks: Entrance animation completed");
+        motionElement._motionState = MotionState.ENTRY_COMPLETE;
+        
+        // Entrance animation complete - no further setup needed
+        // Scroll animations are handled separately in the motion orchestrator
     });
-
-    animation.addEventListener("cancel", () => {
-        console.warn("Motion Blocks: Entrance animation was cancelled");
-        fallbackToVisible(motionElement);
-    });
-}
-
-/**
- * Handles entrance animation completion and potential scroll animation setup.
- * 
- * @param motionElement - Element that finished entrance animation
- * @param motionContext - Motion configuration
- */
-function onEntranceComplete(motionElement: MotionElement, motionContext: MotionContext): void {
-    motionElement._motionState = MotionState.ENTRY_COMPLETE;
-    console.log("Motion Blocks: Entrance animation completed");
-
-    // Set up scroll animation if enabled
-    if (motionContext.motionScrollEnabled) {
-        observeScrollTransition(motionElement, motionContext);
-    }
-}
-
-/**
- * Fallback function to ensure element visibility when animation fails.
- * 
- * @param motionElement - Element to make visible
- */
-function fallbackToVisible(motionElement: MotionElement): void {
-    motionElement.style.opacity = "1";
-    motionElement._motionState = MotionState.ENTRY_COMPLETE;
+    
+    // Start the animation
+    animation.play();
 } 

@@ -32,7 +32,7 @@ export enum AnimationType {
  * Animation lifecycle states for tracking element progression.
  * Used internally to manage animation state machine.
  */
-export enum AnimationState {
+export enum MotionState {
     /** Element initialized but no animations started */
     IDLE = "idle",
     /** Entry animation currently playing */
@@ -51,10 +51,6 @@ export enum AnimationState {
  */
 export const ANIMATION_PRESETS = Object.values(AnimationType);
 
-// ============================================================================
-// UNION TYPES
-// ============================================================================
-
 /**
  * Valid animation type values (string literals).
  * These are the actual string values stored in block attributes.
@@ -62,32 +58,6 @@ export const ANIMATION_PRESETS = Object.values(AnimationType);
 export type AnimationTypeValue = `${AnimationType}`;
 
 
-// ============================================================================
-// TYPE GUARDS & UTILITIES
-// ============================================================================
-
-/**
- * Type guard to check if a string is a valid animation type.
- * 
- * @param value - String to check
- * @returns True if value is a valid animation type
- */
-export function isAnimationType(value: string): value is AnimationTypeValue {
-    return Object.values(AnimationType).includes(value as AnimationType);
-}
-
-/**
- * Safely converts a string to an AnimationType enum value.
- * 
- * @param value - String value from block attributes
- * @returns AnimationType enum value or null if invalid
- */
-export function toAnimationType(value: string): AnimationType | null {
-    if (isAnimationType(value)) {
-        return value as AnimationType;
-    }
-    return null;
-}
 
 // ============================================================================
 // CONFIGURATION INTERFACES
@@ -156,7 +126,7 @@ export interface MotionOptions extends WebAnimationTiming {
  */
 export interface MotionElement extends HTMLElement {
     /** Current animation state in the lifecycle */
-    _motionState?: AnimationState;
+    _motionState?: MotionState;
     /** Active Web Animation instances keyed by type */
     _animations?: Record<string, Animation>;
     /** Active IntersectionObserver instances */

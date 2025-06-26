@@ -6,8 +6,8 @@
  * These animations trigger when elements first become visible in the viewport.
  */
 
-import { AnimationType, type WebAnimationTiming } from "../../shared/types";
-import { ENTRANCE_ANIMATION_KEYFRAMES } from "./keyframes/entrance";
+import { AnimationType, type WebAnimationTiming } from "@/shared/types";
+import { ENTRANCE_ANIMATION_KEYFRAMES } from "@/frontend/animations/keyframes/entrance";
 
 /**
  * Creates an entrance animation using the Web Animations API.

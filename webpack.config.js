@@ -1,4 +1,12 @@
 const defaultConfig = require("@wordpress/scripts/config/webpack.config");
+const path = require("path");
+
+// Shared resolve configuration
+const resolveConfig = {
+	alias: {
+		"@": path.resolve(__dirname, "src")
+	}
+};
 
 // Handle both single config and array of configs (experimental modules)
 if (Array.isArray(defaultConfig)) {
@@ -12,6 +20,10 @@ if (Array.isArray(defaultConfig)) {
 			...scriptConfig,
 			entry: {
 				editor: ["./src/editor/editor.tsx"]
+			},
+			resolve: {
+				...scriptConfig.resolve,
+				...resolveConfig
 			}
 		},
 		// Module config for frontend
@@ -19,6 +31,10 @@ if (Array.isArray(defaultConfig)) {
 			...moduleConfig,
 			entry: {
 				frontend: "./src/frontend/frontend.ts"
+			},
+			resolve: {
+				...moduleConfig.resolve,
+				...resolveConfig
 			}
 		}
 	];
@@ -29,6 +45,10 @@ if (Array.isArray(defaultConfig)) {
 		entry: {
 			editor: ["./src/editor/editor.tsx"],
 			frontend: "./src/frontend/frontend.ts"
+		},
+		resolve: {
+			...defaultConfig.resolve,
+			...resolveConfig
 		}
 	};
 }

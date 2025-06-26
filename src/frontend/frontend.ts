@@ -12,12 +12,12 @@ import {
     type MotionContext, 
     type MotionElement, 
     type MotionOptions, 
-} from "../shared/types";
-import { createEntranceAnimation, createScrollAnimation } from "./animations";
+} from "@/shared/types";
+import { createEntranceAnimation, createScrollAnimation } from "@/frontend/animations";
 
-import { prefersReducedMotion } from "./utils/prefers-reduced-motion";
-import { supportsViewTimeline } from "./utils/supports-view-timeline";
-import { getAnimationType } from "./utils/get-animation-type";
+import { prefersReducedMotion } from "@/frontend/utils/prefers-reduced-motion";
+import { supportsViewTimeline } from "@/frontend/utils/supports-view-timeline";
+import { getAnimationType } from "@/frontend/utils/get-animation-type";
 
 import "./frontend.scss";
 

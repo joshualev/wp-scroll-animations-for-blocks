@@ -23,7 +23,7 @@ import {
     ANIMATION_PRESETS, 
     type AnimationTypeValue, 
     type MotionContext,
-} from "../shared/types";
+} from "@/shared/types";
 
 
 

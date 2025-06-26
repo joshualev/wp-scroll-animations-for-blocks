@@ -13,14 +13,13 @@
       "noEmit": true,
       "baseUrl": ".",
       "paths": {
-        "@wordpress/*": ["node_modules/@wordpress/*"]
+        "@/*": ["src/*"],
       },
       "types": ["node"]
     },
     "include": [
       "src/**/*.ts",
-      "src/**/*.tsx",
-      "src/frontend/types/browser-apis.d.ts",
+      "src/**/*.tsx"
     ],
     "exclude": [
       "node_modules",

@@ -7,7 +7,7 @@
  * entrance animations and scroll-driven animations using the Web Animations API.
  */
 
-import { AnimationType } from "../../../shared/types";
+import { AnimationType } from "@/shared/types";
 
 /**
  * Keyframe definitions for entrance animations.

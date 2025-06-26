@@ -1,4 +1,4 @@
-import { AnimationType, AnimationTypeValue } from "../../shared/types";
+import { AnimationType, AnimationTypeValue } from "@/shared/types";
 
 /**
  * Type guard to check if a string is a valid animation type.

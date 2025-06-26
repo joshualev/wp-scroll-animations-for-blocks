@@ -35,7 +35,7 @@ export interface TypeOption {
     /** Display label for the option */
     label: string;
     /** Value to store in block attributes */
-    value: AnimationTypeValue | "none";
+    value: AnimationTypeValue;
 }
 
 /**
@@ -59,11 +59,10 @@ interface BlockEditProps {
  * Editor dropdown options for animation presets.
  */
 const PRESET_OPTIONS: TypeOption[] = [
-    { label: __("None", "motion-blocks"), value: "none" },
     ...ANIMATION_PRESETS.map((preset): TypeOption => ({
         label: __(preset.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), "motion-blocks"),
         value: preset
-    }))
+    })),
 ];
 
 /**
@@ -90,7 +89,7 @@ function addMotionAttributes(settings: BlockConfiguration): BlockConfiguration {
         attributes: {
             ...existingAttributes,
             motionEnabled: { type: "boolean", default: false },
-            motionType: { type: "string", default: "none" },
+            motionType: { type: "string", default: ANIMATION_PRESETS[0] },
             motionDuration: { type: "number", default: 600 },
             motionDelay: { type: "number", default: 0 },
             motionTimingFunction: { type: "string", default: "ease-out" },
@@ -145,11 +144,11 @@ const withMotionControls = createHigherOrderComponent(
                                         value={motionType}
                                         options={PRESET_OPTIONS}
                                         onChange={(value: string) => setAttributes({ 
-                                            motionType: value as AnimationTypeValue | "none" 
+                                            motionType: value as AnimationTypeValue 
                                         })}
                                     />
 
-                                    {motionType !== "none" && (
+                                    {motionType && (
                                         <Fragment>
                                             <RangeControl
                                                 label={__("Duration (ms)", "motion-blocks")}

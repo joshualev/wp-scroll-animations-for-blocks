@@ -56,7 +56,7 @@ store("motion-blocks", {
             }
 
             // Validate animation type
-            if (!motionContext.motionType || motionContext.motionType === "none") {
+            if (!motionContext.motionType) {
                 return;
             }
 

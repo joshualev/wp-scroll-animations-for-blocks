@@ -64,8 +64,8 @@ export type AnimationTypeValue = `${AnimationType}`;
 export interface MotionContext {
     /** Whether motion animations are enabled for this block */
     motionEnabled: boolean;
-    /** Animation type to use, or "none" to disable */
-    motionType: AnimationTypeValue | "none";
+    /** Animation type to use */
+    motionType: AnimationTypeValue;
     /** Animation duration in milliseconds */
     motionDuration: number;
     /** Delay before animation starts in milliseconds */

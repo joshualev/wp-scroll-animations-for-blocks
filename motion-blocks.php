@@ -24,12 +24,12 @@ if (! defined('ABSPATH')) {
  */
 function motion_blocks_init()
 {
-    $editor_assets = include plugin_dir_path(__FILE__) . 'build/index.asset.php';
+    $editor_assets = include plugin_dir_path(__FILE__) . 'build/editor.asset.php';
 
     // Register our block editor assets
     wp_register_script(
         'motion-blocks-editor',
-        plugins_url('build/index.js', __FILE__),
+        plugins_url('build/editor.js', __FILE__),
         $editor_assets['dependencies'],
         $editor_assets['version'],
         true
@@ -42,7 +42,7 @@ function motion_blocks_init()
 
     // Enqueue frontend assets
     add_action('wp_enqueue_scripts', function () use ($editor_assets) {
-        $frontend_assets = include plugin_dir_path(__FILE__) . 'build/view.asset.php';
+        $frontend_assets = include plugin_dir_path(__FILE__) . 'build/frontend.asset.php';
 
         // Check if wp_enqueue_script_module exists (WordPress 6.5+)
         if (function_exists('wp_enqueue_script_module')) {
@@ -50,7 +50,7 @@ function motion_blocks_init()
             // Using exact pattern from working example
             wp_enqueue_script_module(
                 'motion-blocks-frontend',
-                plugins_url('build/view.js', __FILE__),
+                plugins_url('build/frontend.js', __FILE__),
                 $frontend_assets['dependencies'],
                 $frontend_assets['version']
             );
@@ -58,7 +58,7 @@ function motion_blocks_init()
             // Fallback for older WordPress versions
             wp_enqueue_script(
                 'motion-blocks-frontend-fallback',
-                plugins_url('build/view.js', __FILE__),
+                plugins_url('build/frontend.js', __FILE__),
                 array(),
                 $frontend_assets['version'],
                 true
@@ -68,7 +68,7 @@ function motion_blocks_init()
         // Add custom styles for motion animations
         wp_enqueue_style(
             'motion-blocks-styles',
-            plugins_url('build/style-view.css', __FILE__),
+            plugins_url('build/frontend.css', __FILE__),
             array(),
             $editor_assets['version']
         );
@@ -93,8 +93,7 @@ function motion_blocks_render_block($block_content, $block)
     // Skip blocks without motion enabled
     if (
         empty($motion_attrs['motionEnabled']) ||
-        empty($motion_attrs['motionType']) ||
-        $motion_attrs['motionType'] === 'none'
+        empty($motion_attrs['motionType'])
     ) {
         return $block_content;
     }

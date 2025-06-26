@@ -23,9 +23,30 @@ import {
     ANIMATION_PRESETS, 
     type AnimationTypeValue, 
     type MotionContext,
-    type TypeOption,
-    type TimingFunctionOption
 } from "./types";
+
+
+
+
+/**
+ * Dropdown option for animation type selection.
+ */
+export interface TypeOption {
+    /** Display label for the option */
+    label: string;
+    /** Value to store in block attributes */
+    value: AnimationTypeValue | "none";
+}
+
+/**
+ * Dropdown option for timing function selection.
+ */
+export interface TimingFunctionOption {
+    /** Display label for the option */
+    label: string;
+    /** CSS timing function value */
+    value: string;
+} 
 
 // BlockEditProps type for editor component
 interface BlockEditProps {

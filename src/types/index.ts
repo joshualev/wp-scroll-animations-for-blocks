@@ -162,29 +162,3 @@ export interface MotionElement extends HTMLElement {
     /** Active IntersectionObserver instances */
     _observers?: IntersectionObserver[];
 }
-
-// ============================================================================
-// EDITOR INTERFACES  
-// ============================================================================
-
-
-
-/**
- * Dropdown option for animation type selection.
- */
-export interface TypeOption {
-    /** Display label for the option */
-    label: string;
-    /** Value to store in block attributes */
-    value: AnimationTypeValue | "none";
-}
-
-/**
- * Dropdown option for timing function selection.
- */
-export interface TimingFunctionOption {
-    /** Display label for the option */
-    label: string;
-    /** CSS timing function value */
-    value: string;
-} 

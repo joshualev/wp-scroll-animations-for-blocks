@@ -14,8 +14,9 @@ import {
     type MotionElement, 
     type MotionOptions, 
 } from "./types";
-import { createEntranceAnimation, createScrollAnimation, supportsViewTimeline } from "./animations";
-import { prefersReducedMotion } from "./utils/accessibility";
+import { createEntranceAnimation, createScrollAnimation } from "./animations";
+import { prefersReducedMotion, supportsViewTimeline } from "./utils";
+import "./frontend-view.scss";
 
 /**
  * WordPress Interactivity API store for Motion Blocks.
@@ -287,4 +288,3 @@ function setupScrollAnimation(element: MotionElement, context: MotionContext): v
     }
 }
 
- 

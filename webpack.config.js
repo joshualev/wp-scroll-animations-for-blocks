@@ -11,14 +11,14 @@ if (Array.isArray(defaultConfig)) {
 		{
 			...scriptConfig,
 			entry: {
-				index: ["./src/index.tsx"]
+				editor: ["./src/editor-view.tsx"]
 			}
 		},
 		// Module config for frontend
 		{
 			...moduleConfig,
 			entry: {
-				view: "./src/view.ts"
+				frontend: "./src/frontend-view.ts"
 			}
 		}
 	];
@@ -27,8 +27,8 @@ if (Array.isArray(defaultConfig)) {
 	module.exports = {
 		...defaultConfig,
 		entry: {
-			index: ["./src/index.tsx"],
-			view: "./src/view.ts"
+			editor: ["./src/editor-view.tsx"],
+			frontend: "./src/frontend-view.ts"
 		}
 	};
 }

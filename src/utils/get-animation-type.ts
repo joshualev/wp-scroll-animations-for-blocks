@@ -1,10 +1,4 @@
-import { AnimationType } from "../types";
-
-/**
- * Valid animation type values (string literals).
- * These are the actual string values stored in block attributes.
- */
-type AnimationTypeValue = `${AnimationType}`;
+import { AnimationType, AnimationTypeValue } from "../types";
 
 /**
  * Type guard to check if a string is a valid animation type.

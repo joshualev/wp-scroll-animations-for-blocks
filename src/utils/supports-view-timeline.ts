@@ -9,9 +9,5 @@ export const supportsViewTimeline = (): boolean => {
         console.log(`Motion Blocks: CSS.supports('animation-timeline', 'view()') = ${supports}`);
         return supports;
     }
-    
-    // Fallback: check for ViewTimeline constructor
-    const hasViewTimeline = typeof ViewTimeline !== "undefined";
-    console.log(`Motion Blocks: ViewTimeline constructor available = ${hasViewTimeline}`);
-    return hasViewTimeline;
+    return false;
 };

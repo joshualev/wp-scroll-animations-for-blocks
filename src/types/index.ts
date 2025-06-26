@@ -1,22 +1,17 @@
 /**
- * Motion Blocks Type Definitions
- * ==============================
+ * Motion Blocks Type System
  * 
- * This file contains all type definitions for the Motion Blocks plugin.
- * It provides a centralized location for:
- * - Animation types and states
- * - Configuration interfaces
- * - Runtime element tracking
- * - Web Animations API wrappers
+ * Complete type definitions for the Motion Blocks WordPress plugin.
+ * This is the main entry point for all type imports.
  */
 
 // ============================================================================
-// ENUMS & CONSTANTS
+// CORE ENUMS
 // ============================================================================
 
 /**
- * Available animation type names.
- * These correspond to CSS animation keyframes and are used throughout the plugin.
+ * Available animation types supported by the plugin.
+ * Each type corresponds to CSS keyframe definitions.
  */
 export enum AnimationType {
     FADE_IN = "fade-in",
@@ -30,7 +25,6 @@ export enum AnimationType {
 
 /**
  * Animation lifecycle states for tracking element progression.
- * Used internally to manage animation state machine.
  */
 export enum MotionState {
     /** Element initialized but no animations started */
@@ -45,32 +39,32 @@ export enum MotionState {
     SCROLL_ACTIVE = "scroll_active"
 }
 
+// ============================================================================
+// CONSTANTS & BASIC TYPES
+// ============================================================================
+
 /**
  * Array of all available animation types for iteration.
- * Automatically derived from the AnimationType enum.
  */
 export const ANIMATION_PRESETS = Object.values(AnimationType);
 
 /**
- * Valid animation type values (string literals).
- * These are the actual string values stored in block attributes.
+ * String literal type for animation type values.
  */
 export type AnimationTypeValue = `${AnimationType}`;
-
-
 
 // ============================================================================
 // CONFIGURATION INTERFACES
 // ============================================================================
 
 /**
- * Block configuration passed from PHP to frontend via `data-wp-context`.
+ * Block configuration passed from PHP to frontend via data-wp-context.
  * Contains all user-configured animation settings from the editor.
  */
 export interface MotionContext {
     /** Whether motion animations are enabled for this block */
     motionEnabled: boolean;
-    /** Which animation type to use, or "none" to disable */
+    /** Animation type to use, or "none" to disable */
     motionType: AnimationTypeValue | "none";
     /** Animation duration in milliseconds */
     motionDuration: number;
@@ -86,7 +80,7 @@ export interface MotionContext {
 
 /**
  * Web Animations API timing configuration.
- * Subset of the official KeyframeAnimationOptions interface.
+ * Subset of the native KeyframeAnimationOptions interface.
  */
 export interface WebAnimationTiming {
     /** Animation duration in milliseconds */
@@ -106,10 +100,9 @@ export interface WebAnimationTiming {
 export interface MotionOptions extends WebAnimationTiming {
     /**
      * Viewport visibility threshold (0-1).
-     * 
-     * - `0` = element just touches viewport edge
-     * - `1` = element completely inside viewport
-     * - `0.5` = 50% of element visible
+     * - 0: element just touches viewport edge
+     * - 1: element completely inside viewport  
+     * - 0.5: 50% of element visible
      */
     threshold: number;
 }
@@ -120,15 +113,27 @@ export interface MotionOptions extends WebAnimationTiming {
 
 /**
  * Enhanced HTMLElement with motion-specific runtime properties.
- * Used for state tracking during animation lifecycle.
  * 
- * @internal This interface is for internal use only
+ * This interface extends HTMLElement with additional properties added at runtime
+ * for tracking animation state and managing Web Animations API instances.
+ * 
+ * The `_animations` Record stores native browser Animation instances (from the Web Animations API).
+ * Animation is a built-in browser interface that represents a single animation player
+ * and provides methods to control playback (play, pause, cancel, etc.).
+ * 
+ * @internal This interface is for internal use only. Properties prefixed with 
+ * underscore indicate private runtime state.
  */
 export interface MotionElement extends HTMLElement {
     /** Current animation state in the lifecycle */
     _motionState?: MotionState;
-    /** Active Web Animation instances keyed by type */
+    /** 
+     * Active Animation instances from the Web Animations API, keyed by animation type.
+     * Animation is a built-in browser interface for controlling individual animations.
+     */
     _animations?: Record<string, Animation>;
-    /** Active IntersectionObserver instances */
+    /** IntersectionObserver instances for tracking element visibility */
     _observers?: IntersectionObserver[];
 }
+
+// Browser API extensions (ViewTimeline, etc.) are in ./browser-apis.d.ts

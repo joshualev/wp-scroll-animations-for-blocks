@@ -9,6 +9,18 @@
 import { AnimationType } from "../types";
 import { SCROLL_ANIMATION_KEYFRAMES } from "./keyframes/scroll";
 
+interface ViewTimelineOptions {
+    subject: Element;
+    axis?: 'block' | 'inline' | 'vertical' | 'horizontal';
+    inset?: string;
+}
+
+declare const ViewTimeline: {
+    new (options?: ViewTimelineOptions): AnimationTimeline & {
+        readonly currentTime: number | null;
+    };
+};
+
 /**
  * Creates a scroll-driven animation using Web Animations API with ViewTimeline.
  * 

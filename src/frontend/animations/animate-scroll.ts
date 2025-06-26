@@ -6,7 +6,7 @@
  * with ViewTimeline. These animations are tied to the scroll position of elements.
  */
 
-import { AnimationType } from "../types";
+import { AnimationType } from "../../shared/types";
 import { SCROLL_ANIMATION_KEYFRAMES } from "./keyframes/scroll";
 
 interface ViewTimelineOptions {

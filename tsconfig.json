@@ -20,7 +20,7 @@
     "include": [
       "src/**/*.ts",
       "src/**/*.tsx",
-      "src/types/browser-apis.d.ts",
+      "src/frontend/types/browser-apis.d.ts",
     ],
     "exclude": [
       "node_modules",

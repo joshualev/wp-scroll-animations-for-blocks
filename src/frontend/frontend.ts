@@ -12,14 +12,14 @@ import {
     type MotionContext, 
     type MotionElement, 
     type MotionOptions, 
-} from "./types";
+} from "../shared/types";
 import { createEntranceAnimation, createScrollAnimation } from "./animations";
 
 import { prefersReducedMotion } from "./utils/prefers-reduced-motion";
 import { supportsViewTimeline } from "./utils/supports-view-timeline";
 import { getAnimationType } from "./utils/get-animation-type";
 
-import "./frontend-view.scss";
+import "./frontend.scss";
 
 /**
  * WordPress Interactivity API store for Motion Blocks.

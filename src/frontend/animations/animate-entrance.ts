@@ -6,7 +6,7 @@
  * These animations trigger when elements first become visible in the viewport.
  */
 
-import { AnimationType, type WebAnimationTiming } from "../types";
+import { AnimationType, type WebAnimationTiming } from "../../shared/types";
 import { ENTRANCE_ANIMATION_KEYFRAMES } from "./keyframes/entrance";
 
 /**

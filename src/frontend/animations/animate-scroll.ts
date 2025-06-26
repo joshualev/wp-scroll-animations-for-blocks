@@ -6,11 +6,11 @@
  * with ViewTimeline. These animations are tied to the scroll position of elements.
  */
 
-import { AnimationType } from "@/shared/types";
+import { AnimationType, MotionElement } from "@/shared/types";
 import { SCROLL_ANIMATION_KEYFRAMES } from "@/frontend/animations/keyframes/scroll";
 
 interface ViewTimelineOptions {
-    subject: Element;
+    subject: MotionElement;
     axis?: 'block' | 'inline' | 'vertical' | 'horizontal';
     inset?: string;
 }
@@ -25,31 +25,36 @@ declare const ViewTimeline: {
  * Creates a scroll-driven animation using Web Animations API with ViewTimeline.
  * 
  * @param element - Target element to animate
- * @param type - Animation type to apply
+ * @param animationType - Animation type to apply
  * @param scrollRange - Scroll threshold percentage (0-100)
  * @returns Animation instance or null if failed
  */
+
+interface ScrollAnimationOptions {
+    motionElement: MotionElement;
+    animationType: AnimationType;
+    scrollRange: number;
+}
+
 export function createScrollAnimation(
-    element: Element,
-    type: AnimationType,
-    scrollRange: number
+    { motionElement, animationType, scrollRange }: ScrollAnimationOptions
 ): Animation | null {
     try {
-        const keyframes = SCROLL_ANIMATION_KEYFRAMES[type];
+        const keyframes = SCROLL_ANIMATION_KEYFRAMES[animationType];
         if (!keyframes) {
-            console.error(`Motion Blocks: Unknown animation type: ${type}`);
+            console.error(`Motion Blocks: Unknown animation type: ${animationType}`);
             return null;
         }
 
         console.log(`Motion Blocks: Creating scroll animation with Web Animations API`);
-        console.log(`  - Type: ${type}`);
+        console.log(`  - Type: ${animationType}`);
         console.log(`  - Scroll range: ${scrollRange}%`);
         console.log(`  - Using scroll-specific keyframes:`, keyframes);
 
 
         // Create ViewTimeline with proper options
         const viewTimelineOptions: ViewTimelineOptions = {
-            subject: element,
+            subject: motionElement,
             axis: 'block'
         };
         
@@ -57,7 +62,7 @@ export function createScrollAnimation(
 
         // Scroll animation with 3-step keyframes
         // Opacity reaches 100% at middle step, directional animation continues throughout
-        const animation = element.animate(keyframes, {
+        const animation = motionElement.animate(keyframes, {
             duration: 1,
             fill: 'both',
             timeline: viewTimeline
@@ -68,7 +73,7 @@ export function createScrollAnimation(
 
     } catch (error) {
         console.warn("Motion Blocks: Failed to create scroll animation:", error);
-        return fallbackToCSS(element, scrollRange);
+        return fallbackToCSS(motionElement, scrollRange);
     }
 }
 
@@ -79,10 +84,9 @@ export function createScrollAnimation(
  * @param scrollRange - Scroll threshold percentage
  * @returns null (no Animation object, but CSS is applied)
  */
-function fallbackToCSS(element: Element, scrollRange: number): null {
+function fallbackToCSS(motionElement: MotionElement, scrollRange: number): null {
     try {
-        console.log("Motion Blocks: Trying CSS fallback for scroll animation");
-        const style = (element as HTMLElement).style;
+        const style = (motionElement as HTMLElement).style;
         style.setProperty('animation-timeline', 'view()');
         style.setProperty('animation-range', `entry 0% cover ${scrollRange}%`);
         return null; // No Animation object to return, but CSS is applied

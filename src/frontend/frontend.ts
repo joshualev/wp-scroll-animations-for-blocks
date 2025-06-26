@@ -166,14 +166,18 @@ function startEntranceAnimation(
     motionElement._motionState = MotionState.ENTRY_PLAYING;
 
     // Convert string type to enum safely
-    const type = getAnimationType(motionContext.motionType);
-    if (!type) {
+    const animationType = getAnimationType(motionContext.motionType);
+    if (!animationType) {
         console.warn(`Motion Blocks: Invalid animation type: ${motionContext.motionType}`);
         motionElement.style.opacity = "1"; // Fallback visibility
         return;
     }
 
-    const animation = createEntranceAnimation(motionElement, type, motionOptions);
+    const animation = createEntranceAnimation({
+        motionElement: motionElement,
+        animationType: animationType,
+        timing: motionOptions
+    });
 
     if (!animation) {
         console.warn("Motion Blocks: Failed to create entrance animation");
@@ -188,15 +192,12 @@ function startEntranceAnimation(
 
     // Handle animation completion
     animation.addEventListener("finish", () => {
-        console.info("Motion Blocks: Entrance animation completed successfully");
         motionElement._motionState = MotionState.ENTRY_COMPLETE;
 
         // Start watching for element to leave viewport if scroll animation enabled
         if (motionContext.motionScrollEnabled) {
             observeForElementToLeaveAndReturn(motionElement, motionContext);
-        } else {
-            console.info("Motion Blocks: Scroll animation disabled, staying in static state");
-        }
+        } 
     });
 
     animation.addEventListener("cancel", () => {
@@ -205,7 +206,6 @@ function startEntranceAnimation(
         motionElement._motionState = MotionState.ENTRY_COMPLETE;
     });
 
-    console.log("Motion Blocks: Entrance animation started successfully");
 }
 
 /**
@@ -221,8 +221,6 @@ function startEntranceAnimation(
  * has been out of view and comes back.
  */
 function observeForElementToLeaveAndReturn(motionElement: MotionElement, motionContext: MotionContext): void {
-    console.log("Motion Blocks: Setting up observer to watch element leaving viewport");
-
     let hasLeftViewport = false;
 
     const observer = new IntersectionObserver((entries) => {
@@ -231,16 +229,16 @@ function observeForElementToLeaveAndReturn(motionElement: MotionElement, motionC
         if (!entry.isIntersecting && !hasLeftViewport) {
             // Element just left viewport for the first time
             hasLeftViewport = true;
-            console.log("Motion Blocks: Element left viewport - now watching for return");
+            // Motion Blocks: Element left viewport - now watching for return
         } else if (entry.isIntersecting && hasLeftViewport) {
             // Element has returned to viewport after leaving
-            console.log("Motion Blocks: Element returned to viewport - setting up scroll animation");
+            // Motion Blocks: Element returned to viewport - setting up scroll animation
             observer.disconnect(); // Stop watching
             setupScrollAnimation(motionElement, motionContext);
         }
     }, {
-        threshold: 0,
-        rootMargin: "50px"
+        threshold: 0, // 0% threshold to detect when element is out of view, 0% is the top of the viewport
+        rootMargin: "50px" // 50px margin to ensure element is out of view, this is the margin of the viewport
     });
 
     observer.observe(motionElement);
@@ -275,16 +273,17 @@ function setupScrollAnimation(motionElement: MotionElement, motionContext: Motio
 
     // Create scroll animation - this should return Animation instance now
     const animation = createScrollAnimation(
-        motionElement,
-        animationType,
-        motionContext.motionScrollRange || 30
+        {
+            motionElement: motionElement,
+            animationType: animationType,
+            scrollRange: motionContext.motionScrollRange || 30
+        }
     );
 
     if (animation) {
         motionElement._motionState = MotionState.SCROLL_ACTIVE;
         // Store the scroll animation reference
         motionElement._animations!.scroll = animation;
-        console.log("Motion Blocks: Scroll animation activated - will progress automatically with scroll position");
     } else {
         console.warn("Motion Blocks: Failed to create scroll animation, falling back to static state");
         motionElement._motionState = MotionState.SCROLL_READY;

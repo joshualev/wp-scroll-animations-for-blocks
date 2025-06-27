@@ -14,8 +14,6 @@ import "./frontend.scss";
 const prefersReducedMotion = (): boolean =>
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 
-
-
 /**
  * WordPress Interactivity API store for Motion Blocks.
  * Handles the bridge between WordPress and the animation system.

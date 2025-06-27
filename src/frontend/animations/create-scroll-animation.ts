@@ -24,6 +24,7 @@
 
 import { MotionElement, ScrollAnimationType } from "@/shared/types";
 import { SCROLL_ANIMATION_KEYFRAMES } from "@/frontend/animations/keyframes/scroll";
+import { RangeControl } from '@wordpress/components';
 
 /**
  * Configuration options for ViewTimeline scroll-driven animations.
@@ -75,7 +76,6 @@ declare const ViewTimeline: {
 interface ScrollAnimationOptions {
 	motionElement: MotionElement;
 	animationType: ScrollAnimationType;
-	scrollRange: number;
 	completionPoint: number;
 }
 
@@ -106,34 +106,21 @@ export function createScrollAnimation({
 		// and state management now handle the visual alignment.
 		const timeline = new ViewTimeline({ subject: motionElement, axis: 'block' });
 
-		// Create the animation with animation-range support
+		// Create the animation with core properties
 		const animation = motionElement.animate(keyframes, {
 			duration: 1, // Duration is 1 because the timeline dictates the progress.
 			fill: 'both',
 			timeline: timeline,
 		});
 
-		// Convert completion point to proper rangeStart and rangeEnd values
-		// Clamp completion point to safe range
+		// All scroll animations now use the completion point to determine their end.
+		// This simplifies the logic and makes the behavior consistent.
 		const safeCompletionPoint = Math.max(10, Math.min(90, completionPoint));
 		
-		// Calculate proper range values based on completion point
-		// For scroll animations, we want to start immediately and complete at the specified point
-		const rangeStart = 'entry 0%';
-		const rangeEnd = `cover ${safeCompletionPoint}%`;
-		
-		// Apply range if supported (Chrome 115+)
-		try {
-			(animation as any).rangeStart = rangeStart;
-			(animation as any).rangeEnd = rangeEnd;
-			console.log(`Motion Blocks: Applied range: ${rangeStart} to ${rangeEnd} (completion point: ${safeCompletionPoint}%)`);
-		} catch (error) {
-			console.warn('Motion Blocks: animation range not supported, using default timeline range');
-		}
+		// Set range properties on the created animation object
+		(animation as any).rangeStart = 'entry 0%';
+		(animation as any).rangeEnd = `cover ${safeCompletionPoint}%`;
 
-		console.log(
-			'Motion Blocks: Scroll animation created successfully with static keyframes.'
-		);
 		return animation;
 	} catch (error) {
 		console.error('Motion Blocks: Failed to create scroll animation:', error);

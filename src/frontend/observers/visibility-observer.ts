@@ -22,19 +22,14 @@ export function observeElementVisibility(
     motionContext: MotionContext,
     entranceOptions: EntranceAnimationOptions | null
 ): void {
-    console.log("Motion Blocks: Setting up visibility observer for element");
-
     const observer = new IntersectionObserver(
         (entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting && motionElement._motionState === MotionState.IDLE) {
-                    console.log(`Motion Blocks: Element became visible (${(entry.intersectionRatio * 100).toFixed(1)}% visible)`);
                     
                     if (motionContext.scrollAnimationEnabled) {
-                        console.log("Motion Blocks: Setting up scroll animation");
                         setupScrollAnimation(motionElement, motionContext);
                     } else {
-                        console.log("Motion Blocks: Starting entrance animation");
                         if (entranceOptions) {
                             startEntranceAnimation(motionElement, motionContext, entranceOptions);
                         } else {

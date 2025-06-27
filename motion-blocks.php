@@ -35,9 +35,17 @@ function motion_blocks_init()
         true
     );
 
-    // Enqueue editor script
-    add_action('enqueue_block_editor_assets', function () {
+    // Enqueue editor assets (script and styles)
+    add_action('enqueue_block_editor_assets', function () use ($editor_assets) {
         wp_enqueue_script('motion-blocks-editor');
+
+        // Enqueue editor styles
+        wp_enqueue_style(
+            'motion-blocks-editor',
+            plugins_url('build/editor.css', __FILE__),
+            array(),
+            $editor_assets['version']
+        );
     });
 
     // Enqueue frontend assets
@@ -110,7 +118,7 @@ function motion_blocks_render_block($block_content, $block)
         'motionTimingFunction'    => $motion_attrs['motionTimingFunction'] ?? 'ease-out',
         'motionThreshold'         => $motion_attrs['motionThreshold'] ?? 30,
         'scrollAnimationEnabled'  => $motion_attrs['scrollAnimationEnabled'] ?? false,
-        'scrollCompletionPoint'   => $motion_attrs['scrollCompletionPoint'] ?? 50,
+        'scrollCompletionPoint'   => $motion_attrs['scrollCompletionPoint'] ?? 90,
     );
 
     // Add WordPress Interactivity API directives to the block

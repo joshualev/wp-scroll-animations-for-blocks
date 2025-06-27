@@ -1,0 +1,236 @@
+/**
+ * Motion Blocks Editor Styles
+ * ===========================
+ * 
+ * Enhanced editor stylesheet with modern component styling.
+ * Includes fixes for deprecated WordPress components and improved UX.
+ */
+
+// StyleSelector component overrides for better WordPress integration
+.components-grid .components-button {
+    border: 1px solid rgba(30, 30, 30, 0.5);
+    box-shadow: 0 1px 1px rgba(0,0,0,0.04);
+    transition: all 0.2s ease;
+    
+    &:hover {
+        border-color: rgba(30, 30, 30, 0.7);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+    
+    &.is-primary {
+        color: #fff;
+        
+        .dashicon {
+            color: #fff;
+        }
+    }
+
+    // WordPress > 6.4 uses a different selector for pressed state
+    &.is-pressed {
+        color: #fff;
+        background-color: #1e1e1e;
+        border-color: #1e1e1e;
+        
+        .dashicon {
+            color: #fff;
+        }
+    }
+}
+
+// Motion Primitive Menu - WordPress Native Styling
+.motion-primitive-menu {
+    margin-bottom: 16px;
+    
+    &__label {
+        margin-bottom: 8px;
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        color: #1e1e1e;
+        letter-spacing: 0.5px;
+        line-height: 1.4;
+    }
+    
+    &__control {
+        position: relative;
+    }
+    
+    &__trigger {
+        width: 100% !important;
+        justify-content: space-between !important;
+        text-align: left !important;
+        height: 40px !important;
+        padding: 8px 12px !important;
+        border: 1px solid #949494 !important;
+        border-radius: 2px !important;
+        background-color: #fff !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        transition: all 0.2s ease !important;
+        box-shadow: none !important;
+        
+        &:hover {
+            border-color: #1e1e1e !important;
+        }
+        
+        &:focus {
+            border-color: #007cba !important;
+            box-shadow: 0 0 0 1px #007cba !important;
+            outline: none !important;
+        }
+        
+        &[aria-expanded="true"] {
+            border-color: #007cba !important;
+            box-shadow: 0 0 0 1px #007cba !important;
+        }
+        
+        .dashicon {
+            transition: transform 0.2s ease;
+            color: #1e1e1e;
+            flex-shrink: 0;
+        }
+        
+        &[aria-expanded="true"] .dashicon {
+            transform: rotate(180deg);
+        }
+    }
+    
+    &__display {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: #1e1e1e;
+        flex: 1;
+        font-weight: 400;
+        
+        &.is-placeholder {
+            color: #757575;
+            font-style: normal;
+        }
+    }
+    
+    &__popover {
+        z-index: 1000000;
+        
+        .components-popover__content {
+            border: 1px solid #ddd !important;
+            border-radius: 2px !important;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+            background: #fff !important;
+            padding: 8px !important;
+            min-width: 220px;
+            max-width: 320px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    }
+    
+    &__group {
+        padding: 0 !important;
+        margin: 0 !important;
+        
+        .components-menu-group__label {
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #757575;
+            letter-spacing: 0.5px;
+            padding: 8px 12px 4px;
+            margin: 8px 0 4px;
+            border-top: 1px solid #f0f0f0;
+            
+            &:first-child {
+                border-top: none;
+                margin-top: 0;
+            }
+        }
+    }
+    
+    &__item {
+        border-radius: 2px !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        padding: 12px !important;
+        margin: 2px 0 !important;
+        transition: all 0.15s ease !important;
+        cursor: pointer !important;
+        color: #1e1e1e !important;
+        background: transparent !important;
+        border: none !important;
+        width: 100% !important;
+        text-align: left !important;
+        min-height: auto !important;
+        font-weight: 400 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        
+        // Default hover state for non-selected items
+        &:hover:not(.is-selected) {
+            background-color: #f6f7f7 !important;
+            color: #1e1e1e !important;
+        }
+        
+        &:focus:not(.is-selected) {
+            background-color: #f6f7f7 !important;
+            color: #1e1e1e !important;
+            box-shadow: inset 0 0 0 1px #007cba !important;
+            outline: none !important;
+        }
+        
+        // Selected item styling
+        &.is-selected {
+            background-color: #3858e9 !important;
+            color: #fff !important;
+            font-weight: 500 !important;
+            
+            &:hover,
+            &:focus {
+                background-color: #2547c7 !important;
+                color: #fff !important;
+            }
+        }
+        
+        &:disabled,
+        &[aria-disabled="true"] {
+            background-color: transparent !important;
+            color: #a7aaad !important;
+            cursor: not-allowed !important;
+            opacity: 0.6 !important;
+            
+            &:hover {
+                background-color: transparent !important;
+                color: #a7aaad !important;
+            }
+        }
+        
+        // Handle item content
+        .components-menu-item__info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .components-menu-item__info-text {
+            color: #757575;
+            font-size: 12px;
+            line-height: 1.3;
+        }
+        
+        // Handle prefixes and suffixes
+        .components-menu-item__prefix {
+            flex-shrink: 0;
+            color: currentColor;
+            opacity: 0.8;
+        }
+        
+        .components-menu-item__suffix {
+            flex-shrink: 0;
+            color: currentColor;
+            opacity: 0.7;
+            font-size: 11px;
+            font-family: monospace;
+        }
+    }
+}

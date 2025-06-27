@@ -58,13 +58,18 @@ export enum EntranceAnimationType {
  * Scroll animation types - progress with scroll position
  */
 export enum ScrollAnimationType {
-	// Reveal animations that work well with any content
+	// Entry animations (appear once and stay)
 	FADE_IN_UP = 'fade-in-up',
 	FADE_IN_DOWN = 'fade-in-down', 
 	SCALE_IN = 'scale-in',
 	SLIDE_IN_LEFT = 'slide-in-left',
 	SLIDE_IN_RIGHT = 'slide-in-right',
 	ROTATE_IN = 'rotate-in',
+	
+	// Enter & Leave animations (appear and disappear on scroll)
+	FADE_ENTER_LEAVE = 'fade-enter-leave',
+	SCALE_ENTER_LEAVE = 'scale-enter-leave',
+	SLIDE_ENTER_LEAVE = 'slide-enter-leave',
 }
 
 /**
@@ -115,9 +120,10 @@ export type AnimationTypeValue = `${AnimationType}`;
  * - scrollAnimationType: Scroll animation type, or "none" to disable
  * - motionDuration: Animation duration in milliseconds
  * - motionDelay: Delay before animation starts in milliseconds  
- * - motionTimingFunction: CSS easing function name
+ * - motionTimingFunction: CSS easing function name (default: 'ease-out')
  * - motionThreshold: Animation threshold percentage (0-100) - applies to both entrance and scroll
  * - scrollAnimationEnabled: Whether scroll-based animations are enabled
+ * - scrollCompletionPoint: Scroll completion point percentage (0-100) for scroll animations
  */
 export interface MotionContext {
     motionEnabled: boolean;

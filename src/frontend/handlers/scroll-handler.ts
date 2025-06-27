@@ -18,11 +18,6 @@ import { getScrollAnimationType } from "@/frontend/utils/get-animation-type";
  * @param motionContext - Motion configuration
  */
 export function setupScrollAnimation(motionElement: MotionElement, motionContext: MotionContext): void {
-	console.log('Motion Blocks: Setting up scroll animation with context:', {
-		scrollAnimationType: motionContext.scrollAnimationType,
-		scrollAnimationEnabled: motionContext.scrollAnimationEnabled,
-		motionThreshold: motionContext.motionThreshold
-	});
 	/**
 	 * Detects ViewTimeline API support for scroll-driven animations.
 	 * @returns `true` if browser supports CSS scroll-driven animations
@@ -48,17 +43,8 @@ export function setupScrollAnimation(motionElement: MotionElement, motionContext
 		return;
 	}
 
-	// Cancel the completed entrance animation to remove its "fill" effect.
-	if (motionElement._animations?.entrance) {
-		console.log(
-			'Motion Blocks: Cancelling entrance animation to prevent state conflict.'
-		);
-		motionElement._animations.entrance.cancel();
-	}
-
 	// Convert string type to enum safely
 	const animationType = getScrollAnimationType(motionContext.scrollAnimationType);
-	console.log(`Motion Blocks: Scroll animation type check - input: "${motionContext.scrollAnimationType}", parsed: ${animationType}`);
 	
 	if (!animationType) {
 		console.warn(
@@ -71,7 +57,6 @@ export function setupScrollAnimation(motionElement: MotionElement, motionContext
 	const animation = createScrollAnimation({
 		motionElement: motionElement,
 		animationType: animationType,
-		scrollRange: motionContext.motionThreshold,
 		completionPoint: motionContext.scrollCompletionPoint,
 	});
 

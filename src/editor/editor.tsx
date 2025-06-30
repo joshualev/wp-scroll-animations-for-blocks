@@ -11,7 +11,7 @@ import { PanelBody, ToggleControl, SelectControl, RangeControl, BaseControl } fr
 import { __ } from "@wordpress/i18n";
 import { useCallback, useMemo, useEffect } from "@wordpress/element";
 
-import type { MotionContext } from "@/shared/types";
+import type { MotionContext } from "@/core/types";
 import { StyleSelector, AnimationVariantMenu } from "./components";
 import { ENTRANCE_STYLES, SCROLL_STYLES, TIMING_FUNCTIONS, DEFAULT_TIMING_FUNCTION } from "./config/animation-data";
 import { 

@@ -6,7 +6,9 @@
  * Single responsibility utilities extracted from main editor.
  */
 
-import { ENTRANCE_ANIMATION_PRESETS, SCROLL_ANIMATION_PRESETS, EntranceAnimationType, ScrollAnimationType } from "@/shared/types";
+import { ENTRANCE_ANIMATION_PRESETS, EntranceAnimationType } from "@/core/animations/entrance";
+import { SCROLL_ANIMATION_PRESETS, type ScrollAnimationType } from "@/core/animations/scroll";
+
 import { VARIANT_LABELS } from "../config/animation-data";
 
 /**
@@ -112,5 +114,5 @@ export const buildScrollAnimation = (style: string, variant: string): ScrollAnim
 
     // Fallback: if the built animation is invalid, find the first valid one for that style
     const firstMatchingAnimation = SCROLL_ANIMATION_PRESETS.find(p => p.startsWith(style));
-    return (firstMatchingAnimation || ScrollAnimationType.FADE_IN_UP) as ScrollAnimationType;
+    return (firstMatchingAnimation) as ScrollAnimationType;
 }; 

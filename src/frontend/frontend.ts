@@ -6,10 +6,9 @@
  */
 
 import { store, getElement, getContext } from "@wordpress/interactivity";
-import { initializeMotion } from "@/frontend/motion-orchestrator";
-import { MotionContext, MotionElement } from "@/shared/types";
-
-import "./frontend.scss";
+import { initializeMotion } from "@/core/motion-orchestrator";
+import { MotionContext } from "@/core/types";
+import "@/core/scss/animation.scss";
 
 const prefersReducedMotion = (): boolean =>
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
@@ -26,7 +25,7 @@ store("motion-blocks", {
          */
         initMotion() {
             const motionContext = getContext<MotionContext>();
-            const motionElement = getElement().ref as MotionElement;
+            const motionElement = getElement().ref as HTMLElement;
 
 
             console.log("Motion Blocks: Initializing with context:", {

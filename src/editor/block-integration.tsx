@@ -13,7 +13,7 @@ import type { BlockConfiguration } from "@wordpress/blocks";
 import type { ComponentType } from "react";
 
 import { MotionBlocksEditor } from "./editor";
-import type { MotionContext } from "@/shared/types";
+import type { MotionContext } from "@/core/types";
 
 // BlockEditProps type for editor component
 interface BlockEditProps {

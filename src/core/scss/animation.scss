@@ -12,7 +12,7 @@
  * base styling needed for animated elements.
  */
 .has-motion[data-motion-enabled="true"] {
-	// Prevent flash of content - start hidden
+	// Prevent flash of content - start hidden with !important to override editor styles
 	opacity: 0;
 	
 	// Ensure the element is ready for animation

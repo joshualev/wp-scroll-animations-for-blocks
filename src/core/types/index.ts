@@ -14,12 +14,20 @@ import { type ScrollAnimationType } from "@/core/animations/scroll";
  */
 export interface MotionContext {
     motionEnabled: boolean;
-    entranceAnimationType: EntranceAnimationType | "none";
-    scrollAnimationType: ScrollAnimationType | "none";
+    entranceAnimationType?: EntranceAnimationType;
+    scrollAnimationType?: ScrollAnimationType;
     motionDuration: number;
     motionDelay: number;
-    motionTimingFunction: string;
-    motionThreshold: number;
+    motionTimingFunction?: string;
+    motionThreshold?: number;
     scrollAnimationEnabled: boolean;
-    scrollCompletionPoint: number;
+    scrollCompletionPoint?: number;
+    scrollCompletionPointMobile?: number;
+}
+
+export interface WebAnimationTiming {
+    duration: number;
+    delay: number;
+    easing: string;
+    fill?: FillMode;
 }

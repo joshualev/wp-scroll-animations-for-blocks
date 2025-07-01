@@ -135,7 +135,7 @@ function motion_blocks_render_block($block_content, $block)
 
         // Add utility attributes for debugging and CSS targeting
         $processor->set_attribute('data-motion-enabled', 'true');
-        $processor->set_attribute('data-entrance-type', $motion_attrs['entranceAnimationType'] ?? 'fade-in');
+        $processor->set_attribute('data-motion-preset', $motion_attrs['entranceAnimationType'] ?? 'fade-in');
         if (!empty($motion_attrs['scrollAnimationEnabled'])) {
             $processor->set_attribute('data-scroll-type', $motion_attrs['scrollAnimationType'] ?? 'none');
         }

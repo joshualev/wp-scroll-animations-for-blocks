@@ -13,10 +13,6 @@ export {
 	getScrollKeyframes,
 	isValidScrollAnimation,
 	type ScrollAnimationType,
-	type FadeScrollAnimationType,
-	type SlideScrollAnimationType,
-	type ScaleScrollAnimationType,
-	type RotateScrollAnimationType
 } from './keyframes';
 
 export { createScrollAnimation } from './create-scroll-animation';

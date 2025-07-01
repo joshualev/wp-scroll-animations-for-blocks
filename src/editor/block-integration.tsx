@@ -3,22 +3,25 @@
  * ================
  * 
  * Integrates Motion Blocks with WordPress block editor.
- * Adds motion controls to all blocks via higher-order component.
+ * Adds motion controls to all blocks AND enables preview using direct refs!
  */
 
 import { createHigherOrderComponent } from "@wordpress/compose";
-import { Fragment } from "@wordpress/element";
+import { Fragment, useState } from "@wordpress/element";
 import { addFilter } from "@wordpress/hooks";
 import type { BlockConfiguration } from "@wordpress/blocks";
 import type { ComponentType } from "react";
 
 import { MotionBlocksEditor } from "./editor";
+import { useMotionPreview } from "./hooks/use-motion-preview";
 import type { MotionContext } from "@/core/types";
 
 // BlockEditProps type for editor component
 interface BlockEditProps {
     attributes: MotionContext & Record<string, any>;
     setAttributes: (attributes: Partial<MotionContext>) => void;
+    clientId: string;
+    name: string;
     [key: string]: any;
 }
 
@@ -34,32 +37,127 @@ function addMotionAttributes(settings: BlockConfiguration): BlockConfiguration {
         ...settings,
         attributes: {
             ...existingAttributes,
-            motionEnabled: { type: "boolean", default: false },
-            scrollAnimationEnabled: { type: "boolean", default: false },
-            entranceAnimationType: { type: "string", default: "none" },
-            scrollAnimationType: { type: "string", default: "none" },
-            motionDuration: { type: "number", default: 1000 },
-            motionDelay: { type: "number", default: 0 },
-            motionTimingFunction: { type: "string", default: "ease-out" },
-            motionThreshold: { type: "number", default: 20 },
-            scrollCompletionPoint: { type: "number", default: 90 }
+            motionEnabled: { 
+                type: "boolean", 
+                default: false,
+            },
+            scrollAnimationEnabled: { 
+                type: "boolean", 
+                default: false,
+            },
+            entranceAnimationType: { 
+                type: "string",
+                default: "fade-in"
+            },
+            scrollAnimationType: { 
+                type: "string",
+                default: "none"
+            },
+            motionDuration: { 
+                type: "number", 
+                default: 1000 
+            },
+            motionDelay: { 
+                type: "number", 
+                default: 0 
+            },
+            motionTimingFunction: { 
+                type: "string", 
+                default: "ease-out" 
+            },
+            motionThreshold: { 
+                type: "number", 
+                default: 20 
+            },
+            scrollCompletionPoint: { 
+                type: "number", 
+                default: 80 
+            },
+            scrollCompletionPointMobile: {
+                type: "number",
+                default: 50
+            }
         }
     };
 }
 
 /**
- * Higher-order component that adds motion controls to the block inspector.
- * Wraps the original BlockEdit component with additional UI controls.
+ * Higher-order component that adds motion controls AND preview to blocks.
+ * Uses useBlockProps with ref for direct DOM access!
  */
 const withMotionControls = createHigherOrderComponent(
     (BlockEdit: ComponentType<any>) => {
         return (props: BlockEditProps) => {
+            console.log('block edit props', props);
+            const { clientId, attributes, name, setAttributes } = props;
+            
+            // Early exit: Only apply to blocks with motion enabled
+            const hasMotionEnabled = attributes.motionEnabled ?? false;
+            const hasAnimationType = !!(attributes.entranceAnimationType || 
+                                        (attributes.scrollAnimationEnabled && attributes.scrollAnimationType));
+            
+            // If no motion, just render the original block + controls
+            if (!hasMotionEnabled && !hasAnimationType) {
+                return (
+                    <Fragment>
+                        <BlockEdit {...props} />
+                        <MotionBlocksEditor 
+                            attributes={attributes}
+                            setAttributes={setAttributes}
+                        />
+                    </Fragment>
+                );
+            }
+
+            // Only blocks with motion get the preview functionality
+            const [blockElement, setBlockElement] = useState<HTMLDivElement | null>(null);
+
+            // Get motion context with proper defaults
+            const motionContext: MotionContext = {
+                motionEnabled: attributes.motionEnabled ?? false,
+                scrollAnimationEnabled: attributes.scrollAnimationEnabled ?? false,
+                entranceAnimationType: attributes.entranceAnimationType,
+                scrollAnimationType: attributes.scrollAnimationType,
+                motionDuration: attributes.motionDuration ?? 1000,
+                motionDelay: attributes.motionDelay ?? 0,
+                motionTimingFunction: attributes.motionTimingFunction ?? "ease-out",
+                motionThreshold: attributes.motionThreshold ?? 20,
+                scrollCompletionPoint: attributes.scrollCompletionPoint ?? 90,
+                scrollCompletionPointMobile: attributes.scrollCompletionPointMobile ?? 90
+            };
+
+            // Use motion preview hook ONLY for motion-enabled blocks
+            useMotionPreview({
+                clientId,
+                blockRef: { current: blockElement },
+                context: motionContext,
+                enabled: motionContext.motionEnabled,
+            });
+
             return (
                 <Fragment>
-                    <BlockEdit {...props} />
+                    {/* Transparent ref container - only for motion blocks */}
+                    <div 
+                        ref={(element) => {
+                            if (element && !blockElement) {
+                                // Find the actual block element (first child that's a real block)
+                                const foundBlockElement = element.firstElementChild;
+                                if (foundBlockElement) {
+                                    setBlockElement(foundBlockElement as HTMLDivElement);
+                                } else {
+                                    // Fallback - use the wrapper itself
+                                    setBlockElement(element);
+                                }
+                            }
+                        }}
+                    >
+                        <BlockEdit {...props} />
+                    </div>
+                    
+                    {/* Motion Controls */}
                     <MotionBlocksEditor 
-                        attributes={props.attributes}
-                        setAttributes={props.setAttributes}
+                        attributes={attributes}
+                        setAttributes={setAttributes}
                     />
                 </Fragment>
             );

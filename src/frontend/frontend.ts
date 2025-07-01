@@ -2,14 +2,17 @@
  * Motion Blocks Frontend Entry Point
  * 
  * WordPress Interactivity API integration for motion animations.
- * This file handles only the WordPress-specific integration layer.
+ * This file handles only the frontend animation system.
  */
 
 import { store, getElement, getContext } from "@wordpress/interactivity";
-import { initializeMotion } from "@/core/motion-orchestrator";
+import { initializeMotion } from "@/core/motion-init";
 import { MotionContext } from "@/core/types";
 import "@/core/scss/animation.scss";
 
+/**
+ * Check if user prefers reduced motion
+ */
 const prefersReducedMotion = (): boolean =>
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 
@@ -27,29 +30,26 @@ store("motion-blocks", {
             const motionContext = getContext<MotionContext>();
             const motionElement = getElement().ref as HTMLElement;
 
-
-            console.log("Motion Blocks: Initializing with context:", {
-                motionEnabled: motionContext?.motionEnabled,
-                entranceAnimationType: motionContext?.entranceAnimationType,
-                scrollAnimationType: motionContext?.scrollAnimationType,
-                motionThreshold: motionContext?.motionThreshold,
-                motionDuration: motionContext?.motionDuration
-            });
-
             // Early validation
             if (!motionElement || !motionContext?.motionEnabled) {
-                console.warn("Motion Blocks: Skipping - element missing or motion disabled");
+                console.error('❌ Early validation failed:', {
+                    hasElement: !!motionElement,
+                    hasContext: !!motionContext,
+                    motionEnabled: motionContext?.motionEnabled
+                });
                 return;
             }
 
-            // If the user has reduced motion preference, we don't want to animate the element
+            // Respect user's reduced motion preference
             if (prefersReducedMotion()) {
-                console.warn("Motion Blocks: Animations disabled due to reduced motion preference");
+                console.info('♿ Reduced motion preference detected');
+                // Ensure element is visible but not animated
+                motionElement.style.opacity = "1";
                 return;
             }
 
             if (!motionContext.entranceAnimationType) {
-                console.warn("Motion Blocks: No animation type specified");
+                console.warn("Motion Blocks: No animation type specified", motionContext);
                 return;
             }
 

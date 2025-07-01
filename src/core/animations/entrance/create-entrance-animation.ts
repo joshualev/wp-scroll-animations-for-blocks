@@ -10,7 +10,7 @@
 import { MotionContext } from "@/core/types";
 import { 
     type EntranceAnimationType, 
-    ENTRANCE_ANIMATION_KEYFRAMES 
+    getEntranceKeyframes
 } from "@/core/animations/entrance";
 
 
@@ -27,37 +27,25 @@ export function createEntranceAnimation(
     motionElement: HTMLElement,
     motionContext: MotionContext,
     animationType: EntranceAnimationType
-): Animation | null {
+): void {
     try {
-        const keyframes = ENTRANCE_ANIMATION_KEYFRAMES[animationType];
+        const keyframes = getEntranceKeyframes(animationType);
         
         if (!keyframes) {
             console.error(`Unknown entrance animation type: ${animationType}`);
-            return null;
+            return;
         }
         
         // Use MotionContext timing properties directly
-        return motionElement.animate(keyframes, {
+        motionElement.animate(keyframes, {
             duration: motionContext.motionDuration,
             delay: motionContext.motionDelay,
             easing: motionContext.motionTimingFunction,
             fill: "forwards"
-        });
+        }); // Fire and forget
         
     } catch (error) {
         console.error("Failed to create entrance animation:", error);
-        return null;
     }
 }
 
-
-
-// Helper function to get keyframes for a specific animation
-function getEntranceKeyframes(animationType: EntranceAnimationType): Keyframe[] {
-	return ENTRANCE_ANIMATION_KEYFRAMES[animationType];
-}
-
-// Helper function to check if an animation type is valid
-function isValidEntranceAnimation(animationType: string): animationType is EntranceAnimationType {
-	return animationType in ENTRANCE_ANIMATION_KEYFRAMES;
-}

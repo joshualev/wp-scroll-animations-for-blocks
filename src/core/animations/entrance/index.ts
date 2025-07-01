@@ -9,9 +9,9 @@
 export {
 	ENTRANCE_ANIMATION_KEYFRAMES,
 	ENTRANCE_ANIMATION_PRESETS,
-	// ENTRANCE_ANIMATION_GROUPS,
-	// getEntranceKeyframes,
-	// isValidEntranceAnimation,
+	ENTRANCE_ANIMATION_GROUPS,
+	getEntranceKeyframes,
+	isValidEntranceAnimation,
 	type EntranceAnimationType,
 } from './keyframes';
 

@@ -11,8 +11,8 @@ import type { EntranceAnimationType } from "@/core/animations/entrance";
 import type { ScrollAnimationType } from "@/core/animations/scroll";
 import type { MotionContext } from "@/core/types";
 import { 
-    getFirstEntranceAnimationDirection,
-    getFirstScrollAnimationDirection
+    getDefaultEntranceAnimationDirection,
+    getDefaultScrollAnimationDirection
 } from "../adapters/core-data-bridge";
 
 interface UseAnimationSelectionProps {
@@ -24,8 +24,8 @@ export function useAnimationSelection({ isScrollMode, setAttributes }: UseAnimat
     // Select animation type (e.g., "fade", "bounce")
     const selectAnimationType = useCallback((animationType: string) => {
         const firstDirection = isScrollMode 
-            ? getFirstScrollAnimationDirection(animationType)
-            : getFirstEntranceAnimationDirection(animationType);
+                    ? getDefaultScrollAnimationDirection(animationType)
+        : getDefaultEntranceAnimationDirection(animationType);
 
         if (firstDirection) {
             if (isScrollMode) {

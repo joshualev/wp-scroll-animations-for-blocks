@@ -26,6 +26,8 @@
 		"@wordpress/scripts": "^30.18.0"
 	},
 	"dependencies": {
-		"@wordpress/interactivity": "^6.25.0"
+		"@wordpress/editor": "^14.26.0",
+		"@wordpress/interactivity": "^6.25.0",
+		"@wordpress/plugins": "^7.26.0"
 	}
 }

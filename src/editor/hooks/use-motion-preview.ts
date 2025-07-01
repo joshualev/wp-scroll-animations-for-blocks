@@ -7,9 +7,11 @@
  */
 
 import { useEffect, useState, RefObject, useRef } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
 import { createEntranceAnimation, isValidEntranceAnimation } from '@/core/animations/entrance';
 import { createScrollAnimation, isValidScrollAnimation } from '@/core/animations/scroll';
 import type { MotionContext } from '@/core/types';
+import { STORE_NAME } from '../store';
 
 interface UseMotionPreviewProps {
     clientId: string;
@@ -66,14 +68,25 @@ export function useMotionPreview({ clientId, blockRef, context, enabled }: UseMo
     const [isInitialized, setIsInitialized] = useState(false);
     const thresholdTimeoutRef = useRef<NodeJS.Timeout>();
     
+    // Check global animation preview state
+    const { isAnimationPreviewEnabled } = useSelect(
+        (select: any) => ({
+            isAnimationPreviewEnabled: select(STORE_NAME)?.isAnimationPreviewEnabled?.() || false,
+        }),
+        []
+    );
+    
     // Debounce rapid context changes to prevent animation spam
     const debouncedContext = useDebouncedMotionContext(context, 200); // 200ms threshold
+    
+    // Only enable preview if both individual block is enabled AND global preview is on
+    const shouldPreview = enabled && isAnimationPreviewEnabled;
 
     // Initialize motion when preview is enabled and ref is available
     useEffect(() => {
         const blockElement = blockRef.current;
         
-        if (!blockElement || !enabled) {
+        if (!blockElement || !shouldPreview) {
             return;
         }
         
@@ -153,7 +166,7 @@ export function useMotionPreview({ clientId, blockRef, context, enabled }: UseMo
         };
     }, [
         blockRef.current, // Re-run when ref changes
-        enabled, // When enabled state changes
+        shouldPreview, // When preview state changes (local + global)
         debouncedContext, // Use debounced context instead of raw context
         clientId
     ]);

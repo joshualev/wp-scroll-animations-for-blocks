@@ -17,4 +17,7 @@ export { useAnimationSelection } from "./use-animation-selection";
 export { useAnimationSettings } from "./use-animation-settings";
 
 // Motion preview hook (uses your core system in editor!)
-export { useMotionPreview } from "./use-motion-preview"; 
+export { useMotionPreview } from "./use-motion-preview";
+
+// New hook for global animation preview
+export { useGlobalAnimationPreview } from './use-global-animation-preview'; 

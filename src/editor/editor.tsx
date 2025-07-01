@@ -51,6 +51,8 @@ export function MotionBlocksEditor({ attributes, setAttributes }: MotionBlocksEd
     );
 }
 
+import "./store"; // Import and register the store
+import "./global-preview-plugin"; // Register the global preview plugin
 import "./block-integration";
 import "./editor.css";
 import "@/core/scss/animation.scss"; // Import animation styles for editor preview 

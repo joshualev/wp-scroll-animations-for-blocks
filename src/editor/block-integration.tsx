@@ -9,12 +9,14 @@
 import { createHigherOrderComponent } from "@wordpress/compose";
 import { Fragment, useState } from "@wordpress/element";
 import { addFilter } from "@wordpress/hooks";
+import { useSelect } from "@wordpress/data";
 import type { BlockConfiguration } from "@wordpress/blocks";
 import type { ComponentType } from "react";
 
 import { MotionBlocksEditor } from "./editor";
 import { useMotionPreview } from "./hooks/use-motion-preview";
 import type { MotionContext } from "@/core/types";
+import { STORE_NAME } from "./store";
 
 // BlockEditProps type for editor component
 interface BlockEditProps {
@@ -88,16 +90,14 @@ function addMotionAttributes(settings: BlockConfiguration): BlockConfiguration {
 const withMotionControls = createHigherOrderComponent(
     (BlockEdit: ComponentType<any>) => {
         return (props: BlockEditProps) => {
-            console.log('block edit props', props);
             const { clientId, attributes, name, setAttributes } = props;
             
-            // Early exit: Only apply to blocks with motion enabled
+            // Only apply motion behavior when motion is explicitly enabled
             const hasMotionEnabled = attributes.motionEnabled ?? false;
-            const hasAnimationType = !!(attributes.entranceAnimationType || 
-                                        (attributes.scrollAnimationEnabled && attributes.scrollAnimationType));
+            const hasScrollEnabled = attributes.scrollAnimationEnabled ?? false;
             
-            // If no motion, just render the original block + controls
-            if (!hasMotionEnabled && !hasAnimationType) {
+            // If no motion is enabled, just render the original block + controls
+            if (!hasMotionEnabled && !hasScrollEnabled) {
                 return (
                     <Fragment>
                         <BlockEdit {...props} />
@@ -109,7 +109,7 @@ const withMotionControls = createHigherOrderComponent(
                 );
             }
 
-            // Only blocks with motion get the preview functionality
+            // Only blocks with motion actually enabled get the preview functionality
             const [blockElement, setBlockElement] = useState<HTMLDivElement | null>(null);
 
             // Get motion context with proper defaults
@@ -131,7 +131,7 @@ const withMotionControls = createHigherOrderComponent(
                 clientId,
                 blockRef: { current: blockElement },
                 context: motionContext,
-                enabled: motionContext.motionEnabled,
+                enabled: hasMotionEnabled || hasScrollEnabled,
             });
 
             return (
@@ -150,11 +150,12 @@ const withMotionControls = createHigherOrderComponent(
                                 }
                             }
                         }}
+                        style={{ display: 'contents' }} // !Important: Fixes image resize issue. Make wrapper transparent to layout
                     >
                         <BlockEdit {...props} />
                     </div>
                     
-                    {/* Motion Controls */}
+                    {/* Motion Controls - keep them exactly where they were */}
                     <MotionBlocksEditor 
                         attributes={attributes}
                         setAttributes={setAttributes}

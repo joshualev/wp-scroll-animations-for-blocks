@@ -9,7 +9,7 @@
 import { useMemo } from "@wordpress/element";
 import type { MotionContext } from "@/core/types";
 import { 
-    findAnimationType,
+    resolveAnimationType,
     getEntranceAnimationDirections,
     getScrollAnimationDirections
 } from "../adapters/core-data-bridge";
@@ -29,7 +29,7 @@ export function useAnimationState({ attributes }: UseAnimationStateProps) {
 
     // Get current animation and type
     const currentAnimation = scrollAnimationEnabled ? scrollAnimationType : entranceAnimationType;
-    const currentAnimationType = currentAnimation ? findAnimationType(currentAnimation) : undefined;
+    const currentAnimationType = currentAnimation ? resolveAnimationType(currentAnimation) : undefined;
     
     // Get available directions for current type - worth memoizing
     const availableAnimationDirections = useMemo(() => {

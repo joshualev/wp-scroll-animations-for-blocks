@@ -8,11 +8,11 @@
 
 import { useCallback } from "@wordpress/element";
 import type { MotionContext } from "@/core/types";
-import { 
+import {
     getEntranceAnimationTypes,
     getScrollAnimationTypes,
-    getFirstEntranceAnimationDirection,
-    getFirstScrollAnimationDirection
+    getDefaultEntranceAnimationDirection,
+    getDefaultScrollAnimationDirection
 } from "../adapters/core-data-bridge";
 
 interface UseAnimationToggleProps {
@@ -25,7 +25,7 @@ export function useAnimationToggle({ setAttributes }: UseAnimationToggleProps) {
         if (enabled) {
             // Enable with first available entrance animation
             const firstType = getEntranceAnimationTypes()[0];
-            const firstDirection = getFirstEntranceAnimationDirection(firstType);
+            const firstDirection = getDefaultEntranceAnimationDirection(firstType);
             
             setAttributes({
                 motionEnabled: true,
@@ -49,7 +49,7 @@ export function useAnimationToggle({ setAttributes }: UseAnimationToggleProps) {
         if (useScrollMode) {
             // Switch to first available scroll animation
             const firstType = getScrollAnimationTypes()[0];
-            const firstDirection = getFirstScrollAnimationDirection(firstType);
+            const firstDirection = getDefaultScrollAnimationDirection(firstType);
             
             setAttributes({
                 scrollAnimationEnabled: true,
@@ -59,7 +59,7 @@ export function useAnimationToggle({ setAttributes }: UseAnimationToggleProps) {
         } else {
             // Switch to first available entrance animation
             const firstType = getEntranceAnimationTypes()[0];
-            const firstDirection = getFirstEntranceAnimationDirection(firstType);
+            const firstDirection = getDefaultEntranceAnimationDirection(firstType);
             
             setAttributes({
                 scrollAnimationEnabled: false,

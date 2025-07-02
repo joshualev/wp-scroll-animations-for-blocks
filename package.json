@@ -1,34 +1,33 @@
 {
-  "name": "scroll-animations",
-  "version": "1.0.0",
-  "description": "Add scroll animations to all Gutenberg blocks",
-  "author": "Simply Dev",
-  "license": "GPL-2.0-or-later",
-  "scripts": {
-    "build": "wp-scripts build --experimental-modules",
-    "start": "wp-scripts start --experimental-modules",
-    "check-engines": "wp-scripts check-engines",
-    "check-licenses": "wp-scripts check-licenses",
-    "format": "wp-scripts format",
-    "lint:css": "wp-scripts lint-style",
-    "lint:js": "wp-scripts lint-js",
-    "lint:md:docs": "wp-scripts lint-md-docs",
-    "lint:pkg-json": "wp-scripts lint-pkg-json",
-    "packages-update": "wp-scripts packages-update",
-    "plugin-zip": "wp-scripts plugin-zip",
-    "test:e2e": "wp-scripts test-e2e",
-    "test:unit": "wp-scripts test-unit-js"
-  },
-  "devDependencies": {
-    "@wordpress/scripts": "^30.18.0"
-  },
-  "dependencies": {
-    "@wordpress/blocks": "^14.14.0",
-    "@wordpress/components": "^29.11.0",
-    "@wordpress/compose": "^7.25.0",
-    "@wordpress/data": "^10.25.0",
-    "@wordpress/element": "^6.25.0",
-    "@wordpress/i18n": "^5.25.0",
-    "@wordpress/interactivity": "^6.25.0"
-  }
+	"name": "motion-blocks",
+	"version": "1.0.0",
+	"description": "Adds customizable motion effects to any Gutenberg block.",
+	"author": "joshualev",
+	"license": "GPL-2.0-or-later",
+	"main": "build/index.js",
+	"scripts": {
+		"build": "wp-scripts build --experimental-modules",
+		"start": "wp-scripts start --experimental-modules",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"test": "wp-scripts test-unit-js",
+		"wp-env": "wp-env",
+		"packages-update": "wp-scripts packages-update"
+	},
+	"devDependencies": {
+		"@types/wordpress__block-editor": "^11.5.16",
+		"@types/wordpress__blocks": "^12.5.17",
+		"@types/wordpress__components": "^23.0.12",
+		"@types/wordpress__compose": "^6.0.1",
+		"@types/wordpress__element": "^2.4.1",
+		"@types/wordpress__hooks": "^2.4.1",
+		"@types/wordpress__i18n": "^3.4.0",
+		"@wordpress/scripts": "^30.18.0"
+	},
+	"dependencies": {
+		"@wordpress/editor": "^14.26.0",
+		"@wordpress/interactivity": "^6.25.0",
+		"@wordpress/plugins": "^7.26.0"
+	}
 }

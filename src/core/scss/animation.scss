@@ -1,0 +1,61 @@
+/**
+ * Motion Blocks Core Animation Styles
+ * 
+ * Essential styles for the core animation engine.
+ * These are required for both frontend and editor previews to function correctly.
+ */
+
+/*
+ * Base class for elements with motion enabled
+ * ==========================================================================
+ * This mainly serves as a selector for JavaScript and provides any
+ * base styling needed for animated elements.
+ */
+.has-motion[data-motion-enabled="true"] {
+	// Prevent flash of content - start hidden with !important to override editor styles
+	opacity: 0;
+	
+	// Ensure the element is ready for animation
+	// The Web Animations API will handle all transform/opacity changes
+	position: relative;
+	
+	// Improve animation performance
+	will-change: transform, opacity, filter;
+}
+
+/*
+ * Performance optimization
+ * ==========================================================================
+ * Help the browser optimize for animations by giving hints about what
+ * properties will be animated.
+ */
+.has-motion[data-motion-preset="fade-in"] {
+	will-change: opacity;
+}
+
+.has-motion[data-motion-preset*="slide-in"] {
+	will-change: transform, opacity;
+}
+
+.has-motion[data-motion-preset="scale-in"] {
+	will-change: transform, opacity;
+}
+
+.has-motion[data-motion-preset="blur-in"] {
+	will-change: transform, opacity, filter;
+}
+
+/*
+ * Accessibility: Respect user preferences
+ * ==========================================================================
+ * Disable animations for users who prefer reduced motion
+ */
+@media (prefers-reduced-motion: reduce) {
+	.has-motion[data-motion-enabled="true"] {
+		// Reset any will-change hints
+		will-change: auto;
+		
+		// Note: JavaScript should also check for this preference
+		// and disable animations accordingly
+	}
+} 

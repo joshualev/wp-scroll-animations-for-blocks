@@ -1,0 +1,15 @@
+/**
+ * Motion Blocks Editor Styles
+ * ============================
+ * 
+ * Minimal styles for uniform UI components.
+ */
+
+/* Uniform animation style picker buttons */
+.motion-style-button {
+	height: 44px !important;
+	width: 100% !important;
+	min-width: 0 !important;
+	font-size: 13px !important;
+	font-weight: 500 !important;
+}

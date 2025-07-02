@@ -37,7 +37,7 @@ export function observeElementAndTriggerMotion(
     animationConfig: MotionContext,
 ): void {
     // Convert percentage threshold to decimal format required by IntersectionObserver
-    const thresholdDecimal = animationConfig.motionThreshold / 100;
+    const thresholdDecimal = (animationConfig.motionThreshold ?? 0) / 100;
     
     console.log('👁️ Setting up IntersectionObserver:', {
         element: elementToObserve,

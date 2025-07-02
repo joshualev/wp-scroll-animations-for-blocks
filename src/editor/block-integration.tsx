@@ -9,14 +9,12 @@
 import { createHigherOrderComponent } from "@wordpress/compose";
 import { Fragment, useState } from "@wordpress/element";
 import { addFilter } from "@wordpress/hooks";
-import { useSelect } from "@wordpress/data";
 import type { BlockConfiguration } from "@wordpress/blocks";
 import type { ComponentType } from "react";
 
 import { MotionBlocksEditor } from "./editor";
 import { useMotionPreview } from "./hooks/use-motion-preview";
 import type { MotionContext } from "@/core/types";
-import { STORE_NAME } from "./store";
 
 // BlockEditProps type for editor component
 interface BlockEditProps {
@@ -146,6 +144,7 @@ const withMotionControls = createHigherOrderComponent(
                                     setBlockElement(foundBlockElement as HTMLDivElement);
                                 } else {
                                     // Fallback - use the wrapper itself
+                                    console.error('No block element found...setting wrapper element for now till we have it try catch and return a error message instead gracefully so developers can resolve it');
                                     setBlockElement(element);
                                 }
                             }

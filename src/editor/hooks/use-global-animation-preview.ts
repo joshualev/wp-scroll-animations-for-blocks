@@ -11,10 +11,9 @@ import { STORE_NAME } from '../store';
 
 export function useGlobalAnimationPreview() {
     // Select state from store
-    const { isAnimationPreviewEnabled, isBlockEditingLocked } = useSelect(
+    const { isAnimationPreviewEnabled } = useSelect(
         (select: any) => ({
             isAnimationPreviewEnabled: select(STORE_NAME).isAnimationPreviewEnabled(),
-            isBlockEditingLocked: select(STORE_NAME).isBlockEditingLocked(),
         }),
         []
     );
@@ -32,7 +31,6 @@ export function useGlobalAnimationPreview() {
     return {
         // State
         isPreviewEnabled: isAnimationPreviewEnabled,
-        isEditingLocked: isBlockEditingLocked,
         
         // Actions
         actions,

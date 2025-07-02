@@ -7,7 +7,7 @@
 
 import { Button } from "@wordpress/components";
 import { __experimentalGrid as Grid } from '@wordpress/components';
-import type { AnimationTypeOption } from "../../../../utils/ui-transforms";
+import type { AnimationTypeOption } from "../../../utils/ui-transforms";
 
 interface AnimationTypeProps {
     animationTypes: AnimationTypeOption[];

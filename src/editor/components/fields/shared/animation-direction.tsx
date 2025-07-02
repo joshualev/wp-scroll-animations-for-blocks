@@ -7,7 +7,7 @@
 
 import { __ } from "@wordpress/i18n";
 import { SelectControl } from "@wordpress/components";
-import { formatAnimationDirectionLabel } from "../../../../utils/ui-transforms";
+import { formatAnimationDirectionLabel } from "../../../utils/ui-transforms";
 
 interface AnimationDirectionProps {
     value: string;

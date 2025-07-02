@@ -45,11 +45,6 @@ export const selectors = {
     isAnimationPreviewEnabled(state: MotionBlocksState) {
         return state.isAnimationPreviewEnabled;
     },
-    
-    // Alias for backward compatibility and semantic clarity
-    isBlockEditingLocked(state: MotionBlocksState) {
-        return state.isAnimationPreviewEnabled;
-    },
 };
 
 // Reducer

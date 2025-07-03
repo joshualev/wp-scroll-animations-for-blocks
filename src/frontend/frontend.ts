@@ -8,7 +8,6 @@
 import { store, getElement, getContext } from "@wordpress/interactivity";
 import { initializeMotion } from "@/core/motion-init";
 import { MotionBlockContext } from "@/core/types";
-import "@/core/scss/animation.scss";
 
 /**
  * Check if user prefers reduced motion

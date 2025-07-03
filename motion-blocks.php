@@ -98,8 +98,8 @@ function motion_blocks_render_block($block_content, $block)
 {
     $motion_attrs = $block['attrs'] ?? [];
 
-    // Skip blocks without motion enabled
-    if (empty($motion_attrs['motionEnabled'])) {
+    // Skip blocks without motion enabled - use correct mb_ prefixed attribute
+    if (empty($motion_attrs['mb_motionEnabled'])) {
         return $block_content;
     }
 
@@ -110,14 +110,14 @@ function motion_blocks_render_block($block_content, $block)
 
     // Build context object for frontend script
     $motion_context = array(
-        'mb_motionEnabled'           => $motion_attrs['mb_motionEnabled'],
-        'mb_scrollAnimationEnabled'  => $motion_attrs['mb_scrollAnimationEnabled'],
-        'mb_animationType'           => $motion_attrs['mb_animationType'],
-        'mb_duration'                => $motion_attrs['mb_duration'],
-        'mb_delay'                   => $motion_attrs['mb_delay'],
-        'mb_speedCurve'              => $motion_attrs['mb_speedCurve'],
-        'mb_threshold'               => $motion_attrs['mb_threshold'],
-        'mb_scrollCompletionPoint'   => $motion_attrs['mb_scrollCompletionPoint'],
+        'mb_motionEnabled'           => $motion_attrs['mb_motionEnabled'] ?? false,
+        'mb_scrollAnimationEnabled'  => $motion_attrs['mb_scrollAnimationEnabled'] ?? false,
+        'mb_animationType'           => $motion_attrs['mb_animationType'] ?? 'fade-in',
+        'mb_duration'                => $motion_attrs['mb_duration'] ?? 600,
+        'mb_delay'                   => $motion_attrs['mb_delay'] ?? 0,
+        'mb_speedCurve'              => $motion_attrs['mb_speedCurve'] ?? 'ease-out',
+        'mb_threshold'               => $motion_attrs['mb_threshold'] ?? 30,
+        'mb_scrollCompletionPoint'   => $motion_attrs['mb_scrollCompletionPoint'] ?? 90
     );
 
     // Add WordPress Interactivity API directives to the block
@@ -134,9 +134,9 @@ function motion_blocks_render_block($block_content, $block)
 
         // Add utility attributes for debugging and CSS targeting
         $processor->set_attribute('data-motion-enabled', 'true');
-        $processor->set_attribute('data-motion-preset', $motion_attrs['animation'] ?? 'fade-in');
-        if (!empty($motion_attrs['scrollAnimationEnabled'])) {
-            $processor->set_attribute('data-scroll-type', $motion_attrs['animation'] ?? 'none');
+        $processor->set_attribute('data-motion-preset', $motion_attrs['mb_animationType'] ?? 'fade-in');
+        if (!empty($motion_attrs['mb_scrollAnimationEnabled'])) {
+            $processor->set_attribute('data-scroll-type', $motion_attrs['mb_animationType'] ?? 'none');
         }
         $processor->add_class('has-motion');
     }

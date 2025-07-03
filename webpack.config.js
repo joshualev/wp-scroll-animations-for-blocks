@@ -19,7 +19,10 @@ if (Array.isArray(defaultConfig)) {
 		{
 			...scriptConfig,
 			entry: {
-				editor: ["./src/editor/editor.tsx"]
+				editor: [
+					"./src/editor/block-controls/index.tsx",
+					"./src/editor/global-controls/index.tsx"
+				]
 			},
 			resolve: {
 				...scriptConfig.resolve,
@@ -43,7 +46,10 @@ if (Array.isArray(defaultConfig)) {
 	module.exports = {
 		...defaultConfig,
 		entry: {
-			editor: ["./src/editor/editor.tsx"],
+			editor: [
+				"./src/editor/block-controls/index.tsx",
+				"./src/editor/global-controls/index.tsx"
+			],
 			frontend: "./src/frontend/frontend.ts"
 		},
 		resolve: {

@@ -8,7 +8,10 @@
 
 import { Fragment } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
-import { GlobalAnimationPreview } from './components/global-animation-preview';
+import { GlobalAnimationPreview } from './plugin-sidebar';
+
+// Import the store to ensure it's registered
+import './store';
 
 function GlobalPreviewManager() {
     return (

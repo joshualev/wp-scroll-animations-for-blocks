@@ -9,7 +9,7 @@
 import { createReduxStore, register } from '@wordpress/data';
 
 // Store name
-export const STORE_NAME = 'motion-blocks/animation-preview';
+export const GLOBAL_MOTION_BLOCKS_STORE = 'motion-blocks/global-controls';
 
 // Initial state
 interface MotionBlocksState {
@@ -22,20 +22,12 @@ const initialState: MotionBlocksState = {
 
 // Action types
 const TOGGLE_ANIMATION_PREVIEW = 'TOGGLE_ANIMATION_PREVIEW';
-const SET_ANIMATION_PREVIEW = 'SET_ANIMATION_PREVIEW';
 
 // Action creators
 export const actions = {
     toggleAnimationPreview() {
         return {
             type: TOGGLE_ANIMATION_PREVIEW,
-        };
-    },
-    
-    setAnimationPreview(enabled: boolean) {
-        return {
-            type: SET_ANIMATION_PREVIEW,
-            enabled,
         };
     },
 };
@@ -56,19 +48,13 @@ function reducer(state = initialState, action: any): MotionBlocksState {
                 isAnimationPreviewEnabled: !state.isAnimationPreviewEnabled,
             };
             
-        case SET_ANIMATION_PREVIEW:
-            return {
-                ...state,
-                isAnimationPreviewEnabled: action.enabled,
-            };
-            
         default:
             return state;
     }
 }
 
 // Create and register the store
-const store = createReduxStore(STORE_NAME, {
+const store = createReduxStore(GLOBAL_MOTION_BLOCKS_STORE, {
     reducer,
     actions,
     selectors,

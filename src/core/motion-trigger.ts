@@ -6,9 +6,10 @@
  * Observes elements entering the viewport and triggers appropriate entrance or scroll animations.
  */
 
-import { MotionContext } from "@/core/types";
-import { createEntranceAnimation, isValidEntranceAnimation } from "@/core/animations/entrance";
-import { createScrollAnimation, isValidScrollAnimation } from "@/core/animations/scroll";
+import { MotionBlockContext } from "@/core/types";
+import { createEntranceAnimation } from "@/core/animations/create-entrance-animation";
+import { createScrollAnimation } from "@/core/animations/create-scroll-animation";
+import { isValidAnimation } from "@/core/animations/keyframes";
 
 /**
  * Viewport buffer distance for pre-triggering animations.
@@ -34,16 +35,16 @@ const VIEWPORT_TRIGGER_BUFFER = '50px';
  */
 export function observeElementAndTriggerMotion(
     elementToObserve: HTMLElement,
-    animationConfig: MotionContext,
+    animationConfig: MotionBlockContext,
 ): void {
     // Convert percentage threshold to decimal format required by IntersectionObserver
-    const thresholdDecimal = (animationConfig.motionThreshold ?? 0) / 100;
+    const thresholdDecimal = (animationConfig.mb_threshold ?? 0) / 100;
     
     console.log('👁️ Setting up IntersectionObserver:', {
         element: elementToObserve,
-        threshold: `${animationConfig.motionThreshold}% (${thresholdDecimal})`,
-        entranceType: animationConfig.entranceAnimationType,
-        scrollEnabled: animationConfig.scrollAnimationEnabled
+        threshold: `${animationConfig.mb_threshold}% (${thresholdDecimal})`,
+        animationType: animationConfig.mb_animationType,
+        scrollEnabled: animationConfig.mb_scrollAnimationEnabled
     });
     
     const visibilityObserver = new IntersectionObserver(
@@ -93,8 +94,8 @@ export function observeElementAndTriggerMotion(
  * @param motionElement - DOM element to apply animation effects to
  * @param motionConfig - Motion configuration determining animation type and parameters
  */
-function setupMotionAnimation(motionElement: HTMLElement, motionConfig: MotionContext): void {
-    const shouldUseScrollAnimation = motionConfig.scrollAnimationEnabled;
+function setupMotionAnimation(motionElement: HTMLElement, motionConfig: MotionBlockContext): void {
+    const shouldUseScrollAnimation = motionConfig.mb_scrollAnimationEnabled;
     
     if (shouldUseScrollAnimation) {
         setupScrollAnimation(motionElement, motionConfig);
@@ -110,13 +111,13 @@ function setupMotionAnimation(motionElement: HTMLElement, motionConfig: MotionCo
  * @param motionElement - The element to animate
  * @param motionContext - Motion configuration from block attributes
  */
-function setupEntranceAnimation(motionElement: HTMLElement, motionContext: MotionContext): void {
-    if (!motionContext.entranceAnimationType || !isValidEntranceAnimation(motionContext.entranceAnimationType)) {
+function setupEntranceAnimation(motionElement: HTMLElement, motionContext: MotionBlockContext): void {
+    if (!motionContext.mb_animationType || !isValidAnimation(motionContext.mb_animationType)) {
         console.warn("Motion Blocks: No valid entrance animation type found");
         return;
     }
     
-    const animationType = motionContext.entranceAnimationType; // Safe after validation
+    const animationType = motionContext.mb_animationType; // Safe after validation
     
     // Create animation directly from MotionContext properties
     createEntranceAnimation(motionElement, motionContext, animationType);
@@ -129,19 +130,19 @@ function setupEntranceAnimation(motionElement: HTMLElement, motionContext: Motio
  * @param motionElement - The element to animate
  * @param motionContext - Motion configuration from block attributes
  */
-function setupScrollAnimation(motionElement: HTMLElement, motionContext: MotionContext): void {
+function setupScrollAnimation(motionElement: HTMLElement, motionContext: MotionBlockContext): void {
     // Check browser support for ViewTimeline API
     if (!supportsViewTimeline()) {
         console.warn('Motion Blocks: Browser does not support scroll-driven animations.');
         return;
     }
 
-    if (!motionContext.scrollAnimationType || !isValidScrollAnimation(motionContext.scrollAnimationType)) {
-        console.warn(`Motion Blocks: Invalid scroll animation type: ${motionContext.scrollAnimationType}`);
+    if (!motionContext.mb_animationType || !isValidAnimation(motionContext.mb_animationType)) {
+        console.warn(`Motion Blocks: Invalid scroll animation type: ${motionContext.mb_animationType}`);
         return;
     }
     
-    const animationType = motionContext.scrollAnimationType; // Safe after validation
+    const animationType = motionContext.mb_animationType; // Safe after validation
 
     // Create animation directly from MotionContext properties
     createScrollAnimation(motionElement, motionContext, animationType);

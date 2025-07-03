@@ -7,7 +7,7 @@ import { ZOOM_IN_KEYFRAMES, type ZoomAnimationType, ZOOM_ANIMATION_NAMES } from 
 import { ROLL_IN_KEYFRAMES, type RollAnimationType, ROLL_ANIMATION_NAMES } from './roll';
 
 // Automatically composed union type from all animation groups
-export type EntranceAnimationType = 
+export type AnimationType = 
 	| BounceAnimationType
 	| FadeAnimationType
 	| FlipAnimationType
@@ -17,7 +17,7 @@ export type EntranceAnimationType =
 	| ZoomAnimationType;
 
 // Combined keyframes object with automatic type inference
-export const ENTRANCE_ANIMATION_KEYFRAMES = {
+export const ANIMATION_KEYFRAMES = {
 	...BOUNCE_IN_KEYFRAMES,
 	...FADE_IN_KEYFRAMES,
 	...FLIP_IN_KEYFRAMES,
@@ -28,7 +28,7 @@ export const ENTRANCE_ANIMATION_KEYFRAMES = {
 } as const;
 
 // Automatically composed array of all animation names
-export const ENTRANCE_ANIMATION_PRESETS: EntranceAnimationType[] = [
+export const ANIMATION_PRESETS: AnimationType[] = [
 	...BOUNCE_ANIMATION_NAMES,
 	...FADE_ANIMATION_NAMES,
 	...FLIP_ANIMATION_NAMES,
@@ -39,17 +39,19 @@ export const ENTRANCE_ANIMATION_PRESETS: EntranceAnimationType[] = [
 ];
 
 // Helper function to get keyframes for a specific animation
-export function getEntranceKeyframes(animationType: EntranceAnimationType): Keyframe[] {
-	return ENTRANCE_ANIMATION_KEYFRAMES[animationType];
+export function getAnimationKeyframes(animationType: AnimationType): Keyframe[] {
+	return ANIMATION_KEYFRAMES[animationType];
 }
 
 // Helper function to check if an animation type is valid
-export function isValidEntranceAnimation(animationType: string): animationType is EntranceAnimationType {
-	return animationType in ENTRANCE_ANIMATION_KEYFRAMES;
+export function isValidAnimation(animationType: string): animationType is AnimationType {
+	return animationType in ANIMATION_KEYFRAMES;
 }
 
+export type AnimationGroup = keyof typeof ANIMATION_GROUPS;
+
 // Organized animation groups - automatically composed from individual files
-export const ENTRANCE_ANIMATION_GROUPS = {
+export const ANIMATION_GROUPS = {
 	bounce: BOUNCE_ANIMATION_NAMES,
 	fade: FADE_ANIMATION_NAMES,
 	flip: FLIP_ANIMATION_NAMES,

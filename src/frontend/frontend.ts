@@ -7,7 +7,7 @@
 
 import { store, getElement, getContext } from "@wordpress/interactivity";
 import { initializeMotion } from "@/core/motion-init";
-import { MotionContext } from "@/core/types";
+import { MotionBlockContext } from "@/core/types";
 import "@/core/scss/animation.scss";
 
 /**
@@ -27,15 +27,15 @@ store("motion-blocks", {
          * Called when element mounts via `data-wp-init="callbacks.initMotion"`.
          */
         initMotion() {
-            const motionContext = getContext<MotionContext>();
+            const motionContext = getContext<MotionBlockContext>();
             const motionElement = getElement().ref as HTMLElement;
 
             // Early validation
-            if (!motionElement || !motionContext?.motionEnabled) {
+            if (!motionElement || !motionContext?.mb_motionEnabled) {
                 console.error('❌ Early validation failed:', {
                     hasElement: !!motionElement,
                     hasContext: !!motionContext,
-                    motionEnabled: motionContext?.motionEnabled
+                    motionEnabled: motionContext?.mb_motionEnabled
                 });
                 return;
             }
@@ -48,7 +48,7 @@ store("motion-blocks", {
                 return;
             }
 
-            if (!motionContext.entranceAnimationType) {
+            if (!motionContext.mb_animationType) {
                 console.warn("Motion Blocks: No animation type specified", motionContext);
                 return;
             }

@@ -110,15 +110,14 @@ function motion_blocks_render_block($block_content, $block)
 
     // Build context object for frontend script
     $motion_context = array(
-        'motionEnabled'           => true,
-        'entranceAnimationType'   => $motion_attrs['entranceAnimationType'] ?? 'fade-in',
-        'scrollAnimationType'     => $motion_attrs['scrollAnimationType'] ?? 'none',
-        'motionDuration'          => $motion_attrs['motionDuration'] ?? 600,
-        'motionDelay'             => $motion_attrs['motionDelay'] ?? 0,
-        'motionTimingFunction'    => $motion_attrs['motionTimingFunction'] ?? 'ease-out',
-        'motionThreshold'         => $motion_attrs['motionThreshold'] ?? 30,
-        'scrollAnimationEnabled'  => $motion_attrs['scrollAnimationEnabled'] ?? false,
-        'scrollCompletionPoint'   => $motion_attrs['scrollCompletionPoint'] ?? 90,
+        'mb_motionEnabled'           => $motion_attrs['mb_motionEnabled'],
+        'mb_scrollAnimationEnabled'  => $motion_attrs['mb_scrollAnimationEnabled'],
+        'mb_animationType'           => $motion_attrs['mb_animationType'],
+        'mb_duration'                => $motion_attrs['mb_duration'],
+        'mb_delay'                   => $motion_attrs['mb_delay'],
+        'mb_speedCurve'              => $motion_attrs['mb_speedCurve'],
+        'mb_threshold'               => $motion_attrs['mb_threshold'],
+        'mb_scrollCompletionPoint'   => $motion_attrs['mb_scrollCompletionPoint'],
     );
 
     // Add WordPress Interactivity API directives to the block
@@ -135,9 +134,9 @@ function motion_blocks_render_block($block_content, $block)
 
         // Add utility attributes for debugging and CSS targeting
         $processor->set_attribute('data-motion-enabled', 'true');
-        $processor->set_attribute('data-motion-preset', $motion_attrs['entranceAnimationType'] ?? 'fade-in');
+        $processor->set_attribute('data-motion-preset', $motion_attrs['animation'] ?? 'fade-in');
         if (!empty($motion_attrs['scrollAnimationEnabled'])) {
-            $processor->set_attribute('data-scroll-type', $motion_attrs['scrollAnimationType'] ?? 'none');
+            $processor->set_attribute('data-scroll-type', $motion_attrs['animation'] ?? 'none');
         }
         $processor->add_class('has-motion');
     }

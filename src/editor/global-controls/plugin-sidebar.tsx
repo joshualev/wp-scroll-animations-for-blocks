@@ -12,11 +12,34 @@ import { Fragment } from '@wordpress/element';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { media } from '@wordpress/icons';
 import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/editor';
+import { useSelect, useDispatch } from '@wordpress/data';
 
-import { useGlobalAnimationPreview } from '../hooks';
+import { GLOBAL_MOTION_BLOCKS_STORE } from './store';
+
+// Hook moved directly into this file
+function useGlobalAnimationPreview() {
+    // Select state from store
+    const { isAnimationPreviewEnabled } = useSelect(
+        (select: any) => ({
+            isAnimationPreviewEnabled: select(GLOBAL_MOTION_BLOCKS_STORE).isAnimationPreviewEnabled(),
+        }),
+        []
+    );
+
+    // Get actions from store
+    const { toggleAnimationPreview, setAnimationPreview } = useDispatch(GLOBAL_MOTION_BLOCKS_STORE);
+
+    return {
+        // State
+        isPreviewEnabled: isAnimationPreviewEnabled,
+        
+        toggleAnimationPreview: toggleAnimationPreview,
+        setAnimationPreview,
+    };
+}
 
 export function GlobalAnimationPreview() {
-    const { isPreviewEnabled, actions } = useGlobalAnimationPreview();
+    const { isPreviewEnabled, toggleAnimationPreview } = useGlobalAnimationPreview();
 
     return (
         <Fragment>
@@ -44,7 +67,7 @@ export function GlobalAnimationPreview() {
                         __nextHasNoMarginBottom
                         label={__('Enable Animation Preview', 'motion-blocks')}
                         checked={isPreviewEnabled}
-                        onChange={actions.toggle}
+                        onChange={toggleAnimationPreview}
                         help={
                             isPreviewEnabled
                                 ? __('Animation preview is active. Block interactions are disabled.', 'motion-blocks')

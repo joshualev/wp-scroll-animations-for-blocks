@@ -7,19 +7,19 @@
  * This makes it crystal clear that animations are configured from block attributes.
  */
 
-import { MotionBlockContext } from "@/core/types";
+import { MotionContext } from "@/core/types";
 
 // import { 
 //     type ScrollAnimationType,
 //     getScrollKeyframes
 // } from "@/core/animations/scroll";
 
-import { 
+import {
     type AnimationType,
     getAnimationKeyframes
 } from "@/core/animations/keyframes";
 // ViewTimeline API declaration
-declare const ViewTimeline: any; 
+declare const ViewTimeline: any;
 
 /**
  * Creates a scroll animation using MotionContext scroll properties.
@@ -31,23 +31,23 @@ declare const ViewTimeline: any;
  */
 export function createScrollAnimation(
     motionElement: HTMLElement,
-    motionContext: MotionBlockContext,
+    motionContext: MotionContext,
     animationType: AnimationType
 ): void {
     try {
         const keyframes = getAnimationKeyframes(animationType);
-        
+
         if (!keyframes) {
             console.error(`Unknown scroll animation type: ${animationType}`);
             return;
         }
-        
+
         const safeCompletionPoint = Math.max(10, Math.min(100, motionContext.mb_scrollCompletionPoint ?? 50));
-        const timeline = new ViewTimeline({ 
-            subject: motionElement, 
+        const timeline = new ViewTimeline({
+            subject: motionElement,
             axis: 'block'
         });
-        
+
         // Use MotionContext scroll properties directly
         motionElement.animate(keyframes, {
             duration: 1,
@@ -56,7 +56,7 @@ export function createScrollAnimation(
             rangeStart: 'entry 0%',
             rangeEnd: `cover ${safeCompletionPoint}%`,
         });
-        
+
     } catch (error) {
         console.error("Failed to create scroll animation:", error);
     }

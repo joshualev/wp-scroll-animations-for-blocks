@@ -16,26 +16,26 @@ import { createHigherOrderComponent } from "@wordpress/compose";
 import { Fragment, useState } from "@wordpress/element";
 import { addFilter } from "@wordpress/hooks";
 import { InspectorControls } from "@wordpress/block-editor";
-import { 
-    PanelBody, 
-    BaseControl, 
-    ToggleControl, 
-    SelectControl, 
-    RangeControl, 
+import {
+    PanelBody,
+    BaseControl,
+    ToggleControl,
+    SelectControl,
+    RangeControl,
     Button,
-    __experimentalGrid as Grid 
+    __experimentalGrid as Grid
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import type { BlockConfiguration } from "@wordpress/blocks";
-import type { MotionBlockContext } from "@/core/types";
+import type { MotionContext } from "@/core/types";
 import type { AnimationType } from "@/core/animations/keyframes";
 
 import { useMotionPreview } from "./hooks/use-motion-preview";
-import { 
-    getAnimationTypes, 
-    getAnimationDirections, 
-    resolveAnimationType, 
-    getDefaultAnimationDirection 
+import {
+    getAnimationTypes,
+    getAnimationDirections,
+    resolveAnimationType,
+    getDefaultAnimationDirection
 } from "./adapters/core-data-bridge";
 
 // ============================================================================
@@ -85,8 +85,8 @@ const TIMING_OPTIONS = [
  * WordPress BlockEdit component props with motion attributes
  */
 interface MotionBlockEditProps {
-    attributes: MotionBlockContext & Record<string, any>;
-    setAttributes: (attributes: Partial<MotionBlockContext>) => void;
+    attributes: MotionContext & Record<string, any>;
+    setAttributes: (attributes: Partial<MotionContext>) => void;
     clientId: string;
     name: string;
     [key: string]: any;
@@ -99,7 +99,7 @@ interface MotionBlockEditProps {
 /**
  * Creates motion context from block attributes
  */
-function createMotionContext(attributes: MotionBlockContext): MotionBlockContext {
+function createMotionContext(attributes: MotionContext): MotionContext {
     return {
         mb_motionEnabled: attributes.mb_motionEnabled,
         mb_scrollAnimationEnabled: attributes.mb_scrollAnimationEnabled,
@@ -131,7 +131,7 @@ function getAnimationOptions(animationType: string) {
  * Extracts block element for preview functionality
  */
 function extractBlockElement(
-    wrapperElement: HTMLDivElement | null, 
+    wrapperElement: HTMLDivElement | null,
     setBlockElement: (element: HTMLDivElement | null) => void
 ) {
     // Handle React ref cleanup (element can be null when unmounting)
@@ -139,7 +139,7 @@ function extractBlockElement(
         setBlockElement(null);
         return;
     }
-    
+
     const blockElement = wrapperElement.firstElementChild;
     if (blockElement && blockElement.classList.contains('wp-block')) {
         setBlockElement(blockElement as HTMLDivElement);
@@ -168,39 +168,39 @@ function addMotionAttributes(blockSettings: BlockConfiguration): BlockConfigurat
         attributes: {
             ...existingAttributes,
             // Motion state controls
-            mb_motionEnabled: { 
-                type: "boolean", 
+            mb_motionEnabled: {
+                type: "boolean",
                 default: MOTION_DEFAULTS.motionEnabled,
             },
-            mb_scrollAnimationEnabled: { 
-                type: "boolean", 
+            mb_scrollAnimationEnabled: {
+                type: "boolean",
                 default: MOTION_DEFAULTS.scrollAnimationEnabled,
             },
             // Animation configuration
-            mb_animationType: { 
+            mb_animationType: {
                 type: "string",
                 default: MOTION_DEFAULTS.animationType
             },
             // Timing controls (entrance animations only)
-            mb_duration: { 
-                type: "number", 
+            mb_duration: {
+                type: "number",
                 default: MOTION_DEFAULTS.duration
             },
-            mb_delay: { 
-                type: "number", 
+            mb_delay: {
+                type: "number",
                 default: MOTION_DEFAULTS.delay
             },
-            mb_speedCurve: { 
-                type: "string", 
+            mb_speedCurve: {
+                type: "string",
                 default: MOTION_DEFAULTS.speedCurve
             },
             // Visibility and scroll controls
-            mb_threshold: { 
-                type: "number", 
+            mb_threshold: {
+                type: "number",
                 default: MOTION_DEFAULTS.threshold
             },
-            mb_scrollCompletionPoint: { 
-                type: "number", 
+            mb_scrollCompletionPoint: {
+                type: "number",
                 default: MOTION_DEFAULTS.scrollCompletionPoint
             },
         }
@@ -229,16 +229,16 @@ const withMotionControls = createHigherOrderComponent(
     (BlockEdit) => {
         return (props: MotionBlockEditProps) => {
             const { clientId, attributes, setAttributes } = props;
-            
+
             // Block element state for preview functionality
             const [blockElement, setBlockElement] = useState<HTMLDivElement | null>(null);
-            
+
             // Determine if any motion features are enabled
             const hasMotionEnabled = attributes.mb_motionEnabled || attributes.mb_scrollAnimationEnabled;
-            
+
             // Create motion context for preview hook
             const motionContext = createMotionContext(attributes);
-            
+
             // Initialize motion preview functionality for enabled blocks
             useMotionPreview({
                 clientId,
@@ -246,10 +246,10 @@ const withMotionControls = createHigherOrderComponent(
                 context: motionContext,
                 enabled: hasMotionEnabled,
             });
-            
+
             // Process animation options for UI
             const { animationTypes, currentGroup, directions } = getAnimationOptions(attributes.mb_animationType);
-            
+
             // Direct attribute setters
             const setMotionEnabled = (enabled: boolean) => {
                 setAttributes({ mb_motionEnabled: enabled });
@@ -287,7 +287,7 @@ const withMotionControls = createHigherOrderComponent(
                 <Fragment>
                     {/* Conditional motion wrapper for preview functionality */}
                     {hasMotionEnabled ? (
-                        <div 
+                        <div
                             ref={(element: HTMLDivElement | null) => extractBlockElement(element, setBlockElement)}
                             style={{ display: 'contents' }} // Transparent to layout - fixes image resize issues
                         >
@@ -296,18 +296,19 @@ const withMotionControls = createHigherOrderComponent(
                     ) : (
                         <BlockEdit {...props} />
                     )}
-                    
+
                     {/* Motion Controls Panel */}
                     <InspectorControls>
-                        <PanelBody 
-                            title={__("Motion Blocks", "motion-blocks")} 
+                        <PanelBody
+                            title={__("Motion Blocks", "motion-blocks")}
                             initialOpen={false}
                         >
                             {/* Primary Motion Toggle */}
-                            <ToggleControl 
-                                label={__("Enable Animation", "motion-blocks")} 
+                            <ToggleControl
+                                label={__("Enable Animation", "motion-blocks")}
                                 checked={attributes.mb_motionEnabled}
                                 onChange={setMotionEnabled}
+                                disabled={false}
                                 __nextHasNoMarginBottom
                             />
 
@@ -315,14 +316,15 @@ const withMotionControls = createHigherOrderComponent(
                             {attributes.mb_motionEnabled && (
                                 <>
                                     {/* Animation Mode Selection */}
-                                    <ToggleControl 
-                                        label={__("Scroll-based Animation", "motion-blocks")} 
+                                    <ToggleControl
+                                        label={__("Scroll-based Animation", "motion-blocks")}
                                         checked={attributes.mb_scrollAnimationEnabled}
                                         onChange={setScrollEnabled}
+                                        disabled={false}
                                         help={__("Animate with scroll position instead of entrance only.", "motion-blocks")}
                                         __nextHasNoMarginBottom
                                     />
-                                    
+
                                     {/* Animation Type Grid Selector */}
                                     <BaseControl
                                         label={__("Animation Type", "motion-blocks")}
@@ -336,9 +338,9 @@ const withMotionControls = createHigherOrderComponent(
                                                     onClick={() => setAnimationGroup(animationType.name)}
                                                     className="motion-animation-type-button"
                                                     style={{
-                                                        display: 'flex', 
-                                                        alignItems: 'center', 
-                                                        justifyContent: 'center', 
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
                                                         height: '100%'
                                                     }}
                                                 >
@@ -364,12 +366,12 @@ const withMotionControls = createHigherOrderComponent(
                                     )}
 
                                     {/* Visibility Threshold Control */}
-                                    <RangeControl 
-                                        label={__("Visibility Threshold", "motion-blocks")} 
-                                        value={attributes.mb_threshold} 
-                                        onChange={(value) => setThreshold(value ?? CONTROL_RANGES.threshold.min + 20)} 
-                                        min={CONTROL_RANGES.threshold.min} 
-                                        max={CONTROL_RANGES.threshold.max} 
+                                    <RangeControl
+                                        label={__("Visibility Threshold", "motion-blocks")}
+                                        value={attributes.mb_threshold}
+                                        onChange={(value) => setThreshold(value ?? CONTROL_RANGES.threshold.min + 20)}
+                                        min={CONTROL_RANGES.threshold.min}
+                                        max={CONTROL_RANGES.threshold.max}
                                         step={CONTROL_RANGES.threshold.step}
                                         help={__("Percentage of element visibility required to trigger animation.", "motion-blocks")}
                                         __nextHasNoMarginBottom
@@ -379,34 +381,34 @@ const withMotionControls = createHigherOrderComponent(
                                     {/* Entrance Animation Timing Controls */}
                                     {!attributes.mb_scrollAnimationEnabled && (
                                         <>
-                                            <RangeControl 
-                                                label={__("Animation Duration", "motion-blocks")} 
+                                            <RangeControl
+                                                label={__("Animation Duration", "motion-blocks")}
                                                 value={attributes.mb_duration}
-                                                onChange={(value) => setDuration(value ?? CONTROL_RANGES.duration.min + 900)} 
-                                                min={CONTROL_RANGES.duration.min} 
-                                                max={CONTROL_RANGES.duration.max} 
+                                                onChange={(value) => setDuration(value ?? CONTROL_RANGES.duration.min + 900)}
+                                                min={CONTROL_RANGES.duration.min}
+                                                max={CONTROL_RANGES.duration.max}
                                                 step={CONTROL_RANGES.duration.step}
                                                 help={__("How long the animation takes to complete.", "motion-blocks")}
                                                 __nextHasNoMarginBottom
                                                 __next40pxDefaultSize
                                             />
-                                            
-                                            <RangeControl 
-                                                label={__("Animation Delay", "motion-blocks")} 
+
+                                            <RangeControl
+                                                label={__("Animation Delay", "motion-blocks")}
                                                 value={attributes.mb_delay}
-                                                onChange={(value) => setDelay(value ?? CONTROL_RANGES.delay.min)} 
-                                                min={CONTROL_RANGES.delay.min} 
-                                                max={CONTROL_RANGES.delay.max} 
+                                                onChange={(value) => setDelay(value ?? CONTROL_RANGES.delay.min)}
+                                                min={CONTROL_RANGES.delay.min}
+                                                max={CONTROL_RANGES.delay.max}
                                                 step={CONTROL_RANGES.delay.step}
                                                 help={__("How long to wait before starting the animation.", "motion-blocks")}
                                                 __nextHasNoMarginBottom
                                                 __next40pxDefaultSize
                                             />
-                                            
-                                            <SelectControl 
-                                                label={__("Speed Curve", "motion-blocks")} 
-                                                value={attributes.mb_speedCurve} 
-                                                options={TIMING_OPTIONS} 
+
+                                            <SelectControl
+                                                label={__("Speed Curve", "motion-blocks")}
+                                                value={attributes.mb_speedCurve}
+                                                options={TIMING_OPTIONS}
                                                 onChange={setSpeedCurve}
                                                 help={__("How the animation accelerates and decelerates.", "motion-blocks")}
                                                 __nextHasNoMarginBottom
@@ -417,12 +419,12 @@ const withMotionControls = createHigherOrderComponent(
 
                                     {/* Scroll Animation Controls */}
                                     {attributes.mb_scrollAnimationEnabled && (
-                                        <RangeControl 
-                                            label={__("Scroll Completion Point", "motion-blocks")} 
-                                            value={attributes.mb_scrollCompletionPoint} 
-                                            onChange={(value) => setScrollCompletion(value ?? CONTROL_RANGES.scrollCompletion.max - 10)} 
-                                            min={CONTROL_RANGES.scrollCompletion.min} 
-                                            max={CONTROL_RANGES.scrollCompletion.max} 
+                                        <RangeControl
+                                            label={__("Scroll Completion Point", "motion-blocks")}
+                                            value={attributes.mb_scrollCompletionPoint}
+                                            onChange={(value) => setScrollCompletion(value ?? CONTROL_RANGES.scrollCompletion.max - 10)}
+                                            min={CONTROL_RANGES.scrollCompletion.min}
+                                            max={CONTROL_RANGES.scrollCompletion.max}
                                             step={CONTROL_RANGES.scrollCompletion.step}
                                             help={__("Animation completes at this viewport percentage.", "motion-blocks")}
                                             __nextHasNoMarginBottom

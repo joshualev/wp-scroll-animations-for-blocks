@@ -6,7 +6,7 @@
  * Sets up visibility observation to trigger animations when elements come into view.
  */
 
-import { MotionBlockContext } from "@/core/types";
+import { MotionContext } from "@/core/types";
 import { observeElementAndTriggerMotion } from "@/core/motion-trigger";
 
 /**
@@ -19,8 +19,8 @@ import { observeElementAndTriggerMotion } from "@/core/motion-trigger";
  * @param motionContext - Motion configuration from block attributes
  */
 export function initializeMotion(
-	motionElement: HTMLElement,
-	motionContext: MotionBlockContext
+    motionElement: HTMLElement,
+    motionContext: MotionContext
 ): void {
     // Set up observer to trigger animation when element becomes visible
     observeElementAndTriggerMotion(motionElement, motionContext);

@@ -7,7 +7,7 @@
 
 import { store, getElement, getContext } from "@wordpress/interactivity";
 import { initializeMotion } from "@/core/motion-init";
-import { MotionBlockContext } from "@/core/types";
+import { MotionContext } from "@/core/types";
 
 /**
  * Check if user prefers reduced motion
@@ -26,12 +26,12 @@ store("motion-blocks", {
          * Called when element mounts via `data-wp-init="callbacks.initMotion"`.
          */
         initMotion() {
-            const motionContext = getContext<MotionBlockContext>();
+            const motionContext = getContext<MotionContext>();
             const motionElement = getElement().ref as HTMLElement;
 
             // Early validation
             if (!motionElement || !motionContext?.mb_motionEnabled) {
-                console.error('❌ Early validation failed:', {
+                console.error('Early validation failed:', {
                     hasElement: !!motionElement,
                     hasContext: !!motionContext,
                     motionEnabled: motionContext?.mb_motionEnabled
@@ -41,7 +41,7 @@ store("motion-blocks", {
 
             // Respect user's reduced motion preference
             if (prefersReducedMotion()) {
-                console.info('♿ Reduced motion preference detected');
+                console.info('Reduced motion preference detected');
                 // Ensure element is visible but not animated
                 motionElement.style.opacity = "1";
                 return;

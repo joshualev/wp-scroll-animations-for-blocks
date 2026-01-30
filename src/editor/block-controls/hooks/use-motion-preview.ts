@@ -10,13 +10,13 @@ import { useEffect, useCallback, useRef, RefObject } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { useDebounce } from '@wordpress/compose';
 import { observeElementAndTriggerMotion } from '@/core/motion-trigger';
-import type { MotionBlockContext } from '@/core/types';
+import type { MotionContext } from '@/core/types';
 import { GLOBAL_MOTION_BLOCKS_STORE } from '@/editor/global-controls/store';
 
 interface UseMotionPreviewProps {
     clientId: string;
     blockRef: RefObject<HTMLElement | null>;
-    context: MotionBlockContext;
+    context: MotionContext;
     enabled: boolean;
 }
 
@@ -34,7 +34,7 @@ export function useMotionPreview({ blockRef, context, enabled }: UseMotionPrevie
         }),
         []
     );
-    
+
     // Only enable preview if both individual block enabled AND global preview is on
     const shouldPreview = enabled && isAnimationPreviewEnabled;
 
@@ -61,7 +61,7 @@ export function useMotionPreview({ blockRef, context, enabled }: UseMotionPrevie
             console.error('Motion Blocks: Preview setup failed:', error);
         }
     }, [
-        shouldPreview, 
+        shouldPreview,
         // Only include animation-relevant properties to prevent unnecessary triggers
         context.mb_animationType,
         context.mb_duration,
@@ -77,7 +77,7 @@ export function useMotionPreview({ blockRef, context, enabled }: UseMotionPrevie
     useEffect(() => {
         const wasPreviewEnabled = previousPreviewState.current;
         const isPreviewEnabled = shouldPreview;
-        
+
         // Only trigger animation setup when:
         // 1. Preview is first turned ON (false -> true)
         // 2. Preview is already on AND animation values changed (debounced)
@@ -97,7 +97,7 @@ export function useMotionPreview({ blockRef, context, enabled }: UseMotionPrevie
         // Cleanup animations when preview is turned off or unmounts
         return () => {
             if (!blockRef.current || !wasPreviewEnabled) return;
-            
+
             try {
                 const animations = blockRef.current.getAnimations();
                 animations.forEach(animation => animation.cancel());

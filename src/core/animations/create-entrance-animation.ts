@@ -7,9 +7,9 @@
  * This makes it crystal clear that animations are configured from block attributes.
  */
 
-import { MotionBlockContext } from "@/core/types";
-import { 
-    type AnimationType, 
+import { MotionContext } from "@/core/types";
+import {
+    type AnimationType,
     getAnimationKeyframes
 } from "@/core/animations/keyframes";
 
@@ -25,17 +25,17 @@ import {
  */
 export function createEntranceAnimation(
     motionElement: HTMLElement,
-    motionContext: MotionBlockContext,
+    motionContext: MotionContext,
     animationType: AnimationType
 ): void {
     try {
         const keyframes = getAnimationKeyframes(animationType);
-        
+
         if (!keyframes) {
             console.error(`Unknown entrance animation type: ${animationType}`);
             return;
         }
-        
+
         // Use MotionContext timing properties directly
         motionElement.animate(keyframes, {
             duration: motionContext.mb_duration,
@@ -43,7 +43,7 @@ export function createEntranceAnimation(
             easing: motionContext.mb_speedCurve,
             fill: "forwards"
         }); // Fire and forget
-        
+
     } catch (error) {
         console.error("Failed to create entrance animation:", error);
     }

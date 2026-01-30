@@ -32,7 +32,7 @@ function useGlobalAnimationPreview() {
     return {
         // State
         isPreviewEnabled: isAnimationPreviewEnabled,
-        
+
         toggleAnimationPreview: toggleAnimationPreview,
         setAnimationPreview,
     };
@@ -64,7 +64,6 @@ export function GlobalAnimationPreview() {
                     </p>
 
                     <ToggleControl
-                        __nextHasNoMarginBottom
                         label={__('Enable Animation Preview', 'motion-blocks')}
                         checked={isPreviewEnabled}
                         onChange={toggleAnimationPreview}

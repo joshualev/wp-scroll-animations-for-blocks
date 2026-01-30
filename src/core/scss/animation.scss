@@ -14,11 +14,11 @@
 .has-motion[data-motion-enabled="true"] {
 	// Prevent flash of content - start hidden with !important to override editor styles
 	opacity: 0;
-	
+
 	// Ensure the element is ready for animation
 	// The Web Animations API will handle all transform/opacity changes
 	position: relative;
-	
+
 	// Improve animation performance
 	will-change: transform, opacity, filter;
 }
@@ -54,8 +54,8 @@
 	.has-motion[data-motion-enabled="true"] {
 		// Reset any will-change hints
 		will-change: auto;
-		
+
 		// Note: JavaScript should also check for this preference
 		// and disable animations accordingly
 	}
-} 
+}

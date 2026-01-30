@@ -289,7 +289,6 @@ const withMotionControls = createHigherOrderComponent(
                     {hasMotionEnabled ? (
                         <div
                             ref={(element: HTMLDivElement | null) => extractBlockElement(element, setBlockElement)}
-                            style={{ display: 'contents' }} // Transparent to layout - fixes image resize issues
                         >
                             <BlockEdit {...props} />
                         </div>
@@ -301,15 +300,13 @@ const withMotionControls = createHigherOrderComponent(
                     <InspectorControls>
                         <PanelBody
                             title={__("Motion Blocks", "motion-blocks")}
-                            initialOpen={false}
+                            initialOpen={true}
                         >
                             {/* Primary Motion Toggle */}
                             <ToggleControl
                                 label={__("Enable Animation", "motion-blocks")}
                                 checked={attributes.mb_motionEnabled}
                                 onChange={setMotionEnabled}
-                                disabled={false}
-                                __nextHasNoMarginBottom
                             />
 
                             {/* Show advanced controls only when motion is enabled */}
@@ -320,15 +317,12 @@ const withMotionControls = createHigherOrderComponent(
                                         label={__("Scroll-based Animation", "motion-blocks")}
                                         checked={attributes.mb_scrollAnimationEnabled}
                                         onChange={setScrollEnabled}
-                                        disabled={false}
                                         help={__("Animate with scroll position instead of entrance only.", "motion-blocks")}
-                                        __nextHasNoMarginBottom
                                     />
 
                                     {/* Animation Type Grid Selector */}
                                     <BaseControl
                                         label={__("Animation Type", "motion-blocks")}
-                                        __nextHasNoMarginBottom
                                     >
                                         <Grid columns={3} gap={2}>
                                             {animationTypes.map((animationType) => (
@@ -360,7 +354,6 @@ const withMotionControls = createHigherOrderComponent(
                                                 value: direction
                                             }))}
                                             onChange={(value) => setAnimationType(value as AnimationType)}
-                                            __nextHasNoMarginBottom
                                             __next40pxDefaultSize
                                         />
                                     )}
@@ -374,7 +367,6 @@ const withMotionControls = createHigherOrderComponent(
                                         max={CONTROL_RANGES.threshold.max}
                                         step={CONTROL_RANGES.threshold.step}
                                         help={__("Percentage of element visibility required to trigger animation.", "motion-blocks")}
-                                        __nextHasNoMarginBottom
                                         __next40pxDefaultSize
                                     />
 
@@ -389,7 +381,6 @@ const withMotionControls = createHigherOrderComponent(
                                                 max={CONTROL_RANGES.duration.max}
                                                 step={CONTROL_RANGES.duration.step}
                                                 help={__("How long the animation takes to complete.", "motion-blocks")}
-                                                __nextHasNoMarginBottom
                                                 __next40pxDefaultSize
                                             />
 
@@ -401,7 +392,6 @@ const withMotionControls = createHigherOrderComponent(
                                                 max={CONTROL_RANGES.delay.max}
                                                 step={CONTROL_RANGES.delay.step}
                                                 help={__("How long to wait before starting the animation.", "motion-blocks")}
-                                                __nextHasNoMarginBottom
                                                 __next40pxDefaultSize
                                             />
 
@@ -411,7 +401,6 @@ const withMotionControls = createHigherOrderComponent(
                                                 options={TIMING_OPTIONS}
                                                 onChange={setSpeedCurve}
                                                 help={__("How the animation accelerates and decelerates.", "motion-blocks")}
-                                                __nextHasNoMarginBottom
                                                 __next40pxDefaultSize
                                             />
                                         </>
@@ -427,7 +416,6 @@ const withMotionControls = createHigherOrderComponent(
                                             max={CONTROL_RANGES.scrollCompletion.max}
                                             step={CONTROL_RANGES.scrollCompletion.step}
                                             help={__("Animation completes at this viewport percentage.", "motion-blocks")}
-                                            __nextHasNoMarginBottom
                                             __next40pxDefaultSize
                                         />
                                     )}

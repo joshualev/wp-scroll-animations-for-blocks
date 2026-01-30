@@ -64,6 +64,7 @@ export function GlobalAnimationPreview() {
                     </p>
 
                     <ToggleControl
+                        __nextHasNoMarginBottom
                         label={__('Enable Animation Preview', 'motion-blocks')}
                         checked={isPreviewEnabled}
                         onChange={toggleAnimationPreview}

@@ -40,35 +40,18 @@ export function observeElementAndTriggerMotion(
     // Convert percentage threshold to decimal format required by IntersectionObserver
     const thresholdDecimal = (animationConfig.mb_threshold ?? 0) / 100;
 
-    console.log('👁️ Setting up IntersectionObserver:', {
-        element: elementToObserve,
-        threshold: `${animationConfig.mb_threshold}% (${thresholdDecimal})`,
-        animationType: animationConfig.mb_animationType,
-        scrollEnabled: animationConfig.mb_scrollAnimationEnabled
-    });
-
     const visibilityObserver = new IntersectionObserver(
         (observerEntries) => {
-            console.log('👁️ IntersectionObserver triggered:', observerEntries);
-
             // Find first visible entry
             const firstVisibleEntry = observerEntries.find(entry => entry.isIntersecting);
 
             if (!firstVisibleEntry) {
-                console.log('👁️ No intersecting entries found');
                 return;
             }
-
-            console.log('✨ Element is visible! Triggering animation:', {
-                intersectionRatio: firstVisibleEntry.intersectionRatio,
-                threshold: thresholdDecimal,
-                element: elementToObserve
-            });
 
             // Setup and trigger animation based on configuration
             setupMotionAnimation(elementToObserve, animationConfig);
             visibilityObserver.disconnect(); // Prevents repeated triggers
-            console.log('👁️ Observer disconnected after animation trigger');
         },
         {
             threshold: thresholdDecimal, // Percentage of element that must be visible
@@ -78,7 +61,6 @@ export function observeElementAndTriggerMotion(
 
     // Begin monitoring element visibility
     visibilityObserver.observe(elementToObserve);
-    console.log('👁️ Observer started for element:', elementToObserve);
 }
 
 /**
